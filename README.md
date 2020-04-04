@@ -20,7 +20,9 @@ Acknowledgement
 ===============
 
 The generate_svg script is largely based on the interactive website 
-[boxes.py](https://www.festi.info/boxes.py) of which the library can be found on 
+[boxes.py](https://www.festi.info/boxes.py).
+
+The code found in model_house/boxes and installation_scripts are copied from
 [github](https://github.com/florianfesti/boxes).
 
 
@@ -53,6 +55,13 @@ If you have cloned / downloaded this repo then you can install it with:
 
 Otherwise you can install the library from pypy with:
 >> ./venv/bin/pip install model-house
+
+
+Test Installation
+-----------------
+
+If you have cloned / downloaded this repo then you can test installation with:
+>> ./venv/bin/python test/test_model_house.py
 
 
 Diagram File
