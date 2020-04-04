@@ -40,6 +40,7 @@ class BaseTest(unittest.TestCase):
 
 
 class ModelHouseTest(BaseTest):
+
     def test_installation(self):
         from seaborn_model_house.boxes import Boxes, edges, svgutil
 
@@ -52,10 +53,16 @@ class ModelHouseTest(BaseTest):
         box.output = result_file
         svgutil.SVGFile.METADATA = f'\nCreated by Unittest: {self.name}\n'
         box.open()
-        d2 = edges.Bolts(2)
-        box.rectangularWall(10, 10, "FFFF",
-                            bedBolts=[d2] * 4,
-                            move="right")
+        x=y=h=100.0
+
+        d2 = d3 = None
+        box.rectangularWall(x, h, "FFFF", bedBolts=[d2] * 4, move="right")
+        box.rectangularWall(y, h, "FfFf", bedBolts=[d3, d2, d3, d2], move="up")
+        box.rectangularWall(y, h, "FfFf", bedBolts=[d3, d2, d3, d2])
+        box.rectangularWall(x, h, "FFFF", bedBolts=[d2] *4, move="left up")
+        box.rectangularWall(x, y, "ffff", bedBolts=[d2, d3, d2, d3],
+                             move="right")
+        box.rectangularWall(x, y, "ffff", bedBolts=[d2, d3, d2, d3])
         box.close()
         self.assert_result_file(expected_file, result_file)
 

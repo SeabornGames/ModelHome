@@ -2,10 +2,11 @@ import glob
 import os
 import sys
 from subprocess import check_output, CalledProcessError
-from setuptools import setup, find_packages
+from setuptools import setup
 from setuptools.command.build_py import build_py
 
 
+# todo make sure this works
 class CustomBuildExtCommand(build_py):
     """Customized setuptools install command - prints a friendly greeting."""
 
@@ -83,10 +84,9 @@ setup(
         'lxml',
         'seaborn_table',
     ],
-    # todo uncomment
-    # cmdclass={
-    #     'build_py': CustomBuildExtCommand,
-    # },
+    cmdclass={
+        'build_py': CustomBuildExtCommand,
+    },
     test_suite="test",
     long_description=open('README.md').read(),
     package_data={
