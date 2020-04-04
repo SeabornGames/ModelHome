@@ -21,7 +21,7 @@ import argparse
 import re
 import abc
 
-from boxes import gears
+from . import gears
 
 def getDescriptions():
     d = {edge.char: edge.description for edge in globals().values()

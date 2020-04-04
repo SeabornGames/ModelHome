@@ -20,7 +20,7 @@ import tempfile
 import os
 import cairo
 import re
-from boxes import svgutil
+from . import svgutil
 
 class PSFile:
     def __init__(self, filename):

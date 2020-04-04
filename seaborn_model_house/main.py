@@ -4,8 +4,8 @@ import sys
 from argparse import ArgumentParser
 from shutil import copyfile
 
-from boxes.layouts.model_house.diagram import Diagram
-from boxes.layouts.model_house.wall_table import WallTable
+from seaborn_model_house.diagram import Diagram
+from seaborn_model_house.wall_table import WallTable
 
 
 def main(cli_args=sys.argv[1:]):

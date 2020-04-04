@@ -58,10 +58,17 @@ class Extend:
         self.addPoint(extend.minx, extend.miny)
         self.addPoint(extend.maxx, extend.maxy)
 
+
+METADATA = '''
+{name} - {description}
+Created with Boxes.py (https://festi.info/boxes.py)
+Creation date: {date}
+'''
+
 class SVGFile(object):
     pathre = re.compile(r"[MCL]? *((-?\d+(\.\d+)?) (-?\d+(\.\d+)?) *)+")
     transformre = re.compile(r"matrix\(" + ",".join([r"(-?\d+(\.\d+)?)"] * 6) + "\)")
-
+    METADATA = METADATA
     def __init__(self, filename):
         self.filename = filename
         self.minx = self.maxx = self.miny = self.maxy = None
@@ -201,12 +208,8 @@ class SVGFile(object):
         return number
 
     def addMetadata(self, md):
-        txt = """
-{name} - {description}
-Created with Boxes.py (https://festi.info/boxes.py)
-Creation date: {date}
-""".format(date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") , **md)
-
+        txt = self.METADATA.format(
+            **md, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         txt += "Command line (remove spaces beteen dashes): %s\n" % md["cli"].replace("--", "- -")
 
         if md["url"]:

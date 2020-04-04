@@ -45,7 +45,7 @@ from os import devnull # for debugging
 from math import pi, cos, sin, tan, radians, degrees, ceil, asin, acos, sqrt
 two_pi = 2 * pi
 import argparse
-from boxes.vectors import kerf, vdiff, vlength
+from .vectors import kerf, vdiff, vlength
 
 __version__ = '0.9'
 

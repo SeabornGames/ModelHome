@@ -41,15 +41,16 @@ class BaseTest(unittest.TestCase):
 
 class ModelHouseTest(BaseTest):
     def test_installation(self):
-        from seaborn_model_house.boxes import Boxes, edges
+        from seaborn_model_house.boxes import Boxes, edges, svgutil
 
         expected_file = self.get_test_data_path('expected', f'{self.name}.svg')
         result_file = self.get_test_data_path('result', f'{self.name}.svg')
         box = Boxes()
         box.addSettingsArgs(edges.FingerJointSettings)
-        box.parseArgs(args=[
-            '--output', result_file,
-        ])
+        box.parseArgs()
+        # todo resolve why parseArgs pops the last argument
+        box.output = result_file
+        svgutil.SVGFile.METADATA = f'\nCreated by Unittest: {self.name}\n'
         box.open()
         d2 = edges.Bolts(2)
         box.rectangularWall(10, 10, "FFFF",
