@@ -71,11 +71,11 @@ class CustomBuildExtCommand(build_py):
 
 
 setup(
-    name='model-house',
+    name='seaborn-model-house',
     description='Generates SVG for laser cutters to create a model house',
     version="1.0.0",
     author="Michael Christenson",
-    packages=find_packages(),
+    packages=['seaborn_model_house'],
     install_requires=[
         'pycairo',
         'cairocffi==0.8.0',
@@ -83,9 +83,10 @@ setup(
         'lxml',
         'seaborn_table',
     ],
-    cmdclass={
-        'build_py': CustomBuildExtCommand,
-    },
+    # todo uncomment
+    # cmdclass={
+    #     'build_py': CustomBuildExtCommand,
+    # },
     test_suite="test",
     long_description=open('README.md').read(),
     package_data={

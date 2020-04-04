@@ -54,7 +54,7 @@ If you have cloned / downloaded this repo then you can install it with:
 >> ./venv/bin/pip install .
 
 Otherwise you can install the library from pypy with:
->> ./venv/bin/pip install model-house
+>> ./venv/bin/pip install seaborn-model-house
 
 
 Test Installation
