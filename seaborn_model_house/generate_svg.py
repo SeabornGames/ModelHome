@@ -26,10 +26,11 @@ def main(cli_args=sys.argv[1:]):
         if diagram:
             box.render_room_floor(diagram.get_room(room))
 
-        for row in (wall_table or []):
-            if (row['room_0'] == room or
-                    (row['room_1'] == room and row['room_0'] not in rooms)):
-                box.render_room_wall(row)
+        if wall_table is not None:
+            for row in wall_table:
+                if (row['room_0'] == room or
+                        (args.second_room_wall and row['room_1'] == room)):
+                    box.render_room_wall(row)
     box.close()
 
 
@@ -48,9 +49,8 @@ def get_rooms_to_render(args, diagram, wall_table):
 
 
 def parse_args(cli_args):
-    parser = ArgumentParser(description='The layout.model_home will'
-                                        ' create/update a diagram and wall file'
-                                        ' as inputs to the mode_home generator')
+    parser = ArgumentParser(description='The generate_svg will render a diagram'
+                                        ' and/or wall_file into svg files.')
     parser.add_argument('--diagram-file', '-d', default=None,
                         help='path to the input diagram-file.  If not'
                              ' specified then the floors will not be created.')
@@ -91,6 +91,10 @@ def parse_args(cli_args):
     parser.add_argument('--exclude-rooms', default=None, nargs='+',
                         help='Exclude these rooms from generating walls and'
                              ' floors.')
+    parser.add_argument('--second-room-wall', default=False,
+                        action='store_true',
+                        help='if specified then walls will be rendered in '
+                             ' secondary rooms as well.')
     args = parser.parse_args(cli_args)
 
     if args.diagram_file is None and args.wall_file is None:

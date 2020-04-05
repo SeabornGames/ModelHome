@@ -43,9 +43,9 @@ def main(cli_args=sys.argv[1:]):
 
 
 def parse_args(cli_args):
-    parser = ArgumentParser(description='The layout.model_home will'
+    parser = ArgumentParser(description='The layout_model will'
                                         ' create/update a diagram and wall file'
-                                        ' as inputs to the mode_home generator')
+                                        ' as inputs to the generate_svg')
     parser.add_argument('--input-file', '-i', default=None,
                         help='path to the input diagram file')
     parser.add_argument('--diagram-file', '-d', default=None,
@@ -95,7 +95,6 @@ def parse_args(cli_args):
                              ' or virtual walls so it should not be used to '
                              ' override the original --diagram-file')
 
-    # NOT TO BE USED BY WEB UI
     parser.add_argument('--backup-folder', '-b', default='./_backup',
                         help='path to the input file which will be cleaned'
                              ' name of the rooms')
