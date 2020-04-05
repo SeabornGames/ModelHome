@@ -158,6 +158,7 @@ class LayoutModelTest(BaseTest):
     def test_create_wall_file(self):
         layout_model.main([
             '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
             '--wall-file', self.result_file('md')
         ])
         self.assert_result_file(self.expected_file('md'),
