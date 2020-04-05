@@ -59,6 +59,11 @@ def parse_args(cli_args):
     parser.add_argument('--scale', default=20.0, type=float,
                         help='The number of mm in the output to equal a foot'
                              ' in the model')
+    parser.add_argument('--filter-rooms', default=None, nargs='+',
+                        help='Only generate walls and floors for these rooms.')
+    parser.add_argument('--exclude-rooms', default=None, nargs='+',
+                        help='Exclude these rooms from generating walls and'
+                             ' floors.')
     args = parser.parse_args(cli_args)
 
     if args.diagram_file is None and args.wall_file is None:

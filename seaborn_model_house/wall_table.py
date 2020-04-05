@@ -6,9 +6,9 @@ from .cell import VirtualCell, WindowCell, WallCell, DoorCell
 
 
 class WallTable:
-    WALL_FILE_COLUMNS = ['horizontal', 'status',
-                         'height_1', 'height_2', 'window_1', 'window_2', 'door',
-                         'room_0', 'room_1', 'x', 'y', 'symbols']
+    WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1', 'x', 'y',
+                         'symbols', 'height_1', 'height_2', 'window_bottom',
+                         'window_top', 'door']
 
     def __init__(self, wall_file, clear=False):
         self.wall_file = wall_file
