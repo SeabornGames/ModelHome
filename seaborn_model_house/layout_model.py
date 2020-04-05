@@ -102,8 +102,8 @@ def parse_args(cli_args):
 
     args = parser.parse_args(cli_args)
     if args.diagram_file is None and any(
-            [args.remove_names, args.remove_objects, args.highlight_room]):
-        print("--remove-names, --remove-objects, and --highlight-room should"
+            [args.remove_names, args.remove_objects]):
+        print("--remove-names and --remove-objects should"
               " not be used without specifying a different diagram file")
         sys.exit(1)
     if args.input_file and args.diagram_file is None:
