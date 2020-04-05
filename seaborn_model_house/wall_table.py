@@ -167,3 +167,6 @@ class WallTable:
                     grid[wall.y + i][wall.x] = s
         with open(filename, 'w') as fn:
             fn.write('\n'.join([''.join(row) for row in grid]))
+
+    def __iter__(self):
+        return self.wall_table.__iter__()

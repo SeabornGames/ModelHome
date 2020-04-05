@@ -25,6 +25,7 @@ def main(cli_args=sys.argv[1:]):
                 os.path.join(args.output_folder, f'{room.lower()}.svg'))
         if diagram:
             box.render_room_floor(diagram.get_room(room))
+
         for row in (wall_table or []):
             if (row['room_0'] == room or
                     (row['room_1'] == room and row['room_0'] not in rooms)):
@@ -40,7 +41,7 @@ def get_rooms_to_render(args, diagram, wall_table):
         rooms = [row['room_0'] for row in wall_table]
         rooms+= [row['room_1'] for row in wall_table if row['room_1']]
     rooms = list(set(rooms))
-    for exclude in args.exclude_rooms:
+    for exclude in (args.exclude_rooms or []):
         if exclude in rooms:
             rooms.remove(exclude)
     return rooms
