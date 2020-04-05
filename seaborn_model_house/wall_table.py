@@ -91,8 +91,8 @@ class WallTable:
                             symbols = symbols[-1]
                         else:
                             symbols = ''
-                elif cell in self.EMPTY_CELLS:
-                    symbols = ''
+                    if cell in self.EMPTY_CELLS:
+                        symbols = ''
         return walls
 
     def extract_vertical_walls(self, grid, rooms):
@@ -138,7 +138,7 @@ class WallTable:
                             symbols = symbols[-1]
                         else:
                             symbols = ''
-                    elif cell in self.EMPTY_CELLS:
+                    if cell in self.EMPTY_CELLS:
                         symbols = ''
         return walls
 
