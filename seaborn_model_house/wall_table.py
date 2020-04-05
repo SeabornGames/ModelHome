@@ -20,7 +20,7 @@ class WallTable:
         else:
             self.wall_table = SeabornTable(columns=self.WALL_FILE_COLUMNS)
 
-    def update_wall_file(self, diagram):
+    def update_wall_file(self, diagram, keep_missing_walls):
         diagram.grid = diagram.create_grid()
         diagram.add_layout_to_grid()
         grid = '\n'.join(diagram.grid)
@@ -49,6 +49,15 @@ class WallTable:
         for wall in horizontal + vertical:
             if not update_wall(wall):
                 self.wall_table.append(dict(status='new', **wall))
+
+        if not keep_missing_walls:
+            for i in range(len(self.wall_table)-1, -1, -1):
+                wall = self.wall_table[i]
+                if wall.get('status') == 'missing' and not any(
+                        [wall.get(k) for k in ['height_1', 'height_2', 'door',
+                                               'window_bottom', 'window_top']]):
+                    self.wall_file.table.pop(i)
+
         self.wall_table.sort_by_key(('room_0', 'y0', 'x0', 'horizontal'))
         self.wall_table.obj_to_file(self.wall_file, align='left',
                                     quote_numbers=False)

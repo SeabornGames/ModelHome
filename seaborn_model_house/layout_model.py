@@ -36,7 +36,7 @@ def main(cli_args=sys.argv[1:]):
         return
 
     wall_table = WallTable(wall_file=args.wall_file, clear=args.wall_clear)
-    wall_table.update_wall_file(diagram)
+    wall_table.update_wall_file(diagram, args.keep_missing_walls)
 
     if args.recreate_diagram:
         wall_table.recreate_diagram_file(args.recreate_diagram)
@@ -58,7 +58,11 @@ def parse_args(cli_args):
                              ' --input-file with the markdown extension.')
     parser.add_argument('--wall-clear', action='store_true', default=False,
                          help='recreate wall file from scratch')
-
+    parser.add_argument('--keep-missing-walls', action='store_true',
+                        default=False,
+                        help='Walls in the wall file that are no longer in the'
+                             ' diagram but also are without custom values are'
+                             ' normally removed, this flag will negate that.')
     parser.add_argument('--width', type=int, default=None,
                         help='number of feet per row in the file.  If specified'
                              ' then it will change the width in the diagram'
