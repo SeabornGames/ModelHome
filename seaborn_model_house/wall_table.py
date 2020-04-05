@@ -21,19 +21,16 @@ class WallTable:
             self.wall_table = SeabornTable(columns=self.WALL_FILE_COLUMNS)
 
     def update_wall_file(self, diagram, keep_missing_walls):
-        # diagram.remove_virtual()
+        rooms = diagram.rooms.copy()
+        for room in rooms:
+            room.calc_room_dimensions(diagram.layout, diagram.width * 4,
+                                      diagram.height * 2)
+        diagram.remove_virtual()
         diagram.grid = diagram.create_grid()
         diagram.add_layout_to_grid()
         grid = '\n'.join(diagram.grid)
-        # todo remove when remove_virtual is done
-        for h in VirtualCell.characters:
-            grid = grid.replace(h, ' ')
-
-        for room in diagram.rooms:
-            room.calc_room_dimensions(diagram.layout, diagram.width * 4,
-                                      diagram.height * 2)
-        horizontal = self.extract_horizontal_walls(grid, diagram.rooms)
-        vertical = self.extract_vertical_walls(grid, diagram.rooms)
+        horizontal = self.extract_horizontal_walls(grid, rooms)
+        vertical = self.extract_vertical_walls(grid, rooms)
 
         for _row in self.wall_table:
             _row['status'] = 'missing'

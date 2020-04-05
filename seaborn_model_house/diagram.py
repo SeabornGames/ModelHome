@@ -90,11 +90,15 @@ class Diagram:
             v.clean(self)
 
     def remove_virtual(self):
+        """This will remove the virtual walls and then clean the layout,
+           If a wall would be turned into vertical or horizontal line
+           then it will be replaced with a special vertical_break or
+           horizontal_break, so that the wall_file still breaks the two walls"""
         for key, cell in list(self.layout.items()):
             if isinstance(cell, VirtualCell):
                 self.layout.pop(key)
         for cell in self.layout.values():
-            cell.clean(diagram=self)
+            cell.clean(diagram=self, keep_break=True)
 
     def create_room_only_layout(self):
         room_layout = OrderedDict()

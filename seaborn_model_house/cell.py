@@ -14,7 +14,7 @@ class Cell:
     def __str__(self):
         return self.c
 
-    def clean(self, diagram):
+    def clean(self, diagram, keep_break=False):
         if (self.x, self.y + 1) in diagram.layout:
             if (self.x, self.y - 1) in diagram.layout:
                 if (self.x - 1, self.y) in diagram.layout:
@@ -25,7 +25,9 @@ class Cell:
                 else:  # not left
                     if (self.x + 1, self.y) in diagram.layout:
                         self.c = self.left_intersect
-                    else:  # not right or left
+                    elif keep_break and self.c != self.vertical:
+                        self.c = self.vertical_break
+                    else: # not right or left
                         self.c = self.vertical
             else:  # not below
                 if (self.x - 1, self.y) in diagram.layout:
@@ -53,7 +55,10 @@ class Cell:
             else:  # not below
                 if (self.x - 1, self.y) in diagram.layout:
                     if (self.x + 1, self.y) in diagram.layout:
-                        self.c = self.horizontal
+                        if keep_break and self.c != self.horizontal:
+                            self.c = self.horizontal_break
+                        else:
+                            self.c = self.horizontal
                     else:  # not right
                         pass
                 else:  # not left
@@ -136,6 +141,7 @@ class WindowCell(Cell):
 
 class WallCell(Cell):
     horizontal = '═'
+    horizontal_break = '╪'
     internal = '╬'
     top_left_corner = '╔'
     top_intersect = '╦'
@@ -145,6 +151,7 @@ class WallCell(Cell):
     bottom_right_corner = '╝'
     left_intersect = '╠'
     vertical = '║'
+    vertical_break = '╫'
     right_intersect = '╣'
     characters = (horizontal + internal + left_intersect + right_intersect +
                   top_intersect + bottom_intersect + vertical +
