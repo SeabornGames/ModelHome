@@ -7,7 +7,7 @@ their design for the model house, but it should not take special expertise or
 any programming skills.  
 
 This project revolves around the [diagram file](./example/floor1.txt) and 
-the [wall file](./example/wall_height.md).  
+the [wall file](./example/floor1.md).  
 
 The entry point (execution script) ``[layout_model](./venv/bin/layout_model)`` 
 will help create these two files.  While the entry point 

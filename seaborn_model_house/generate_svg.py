@@ -62,7 +62,8 @@ def parse_args(cli_args):
     parser.add_argument('--update-wall-file', default=False,
                         action='store_true',
                         help='If this flag is specified then a wall file'
-                             ' called wall_height.md will be created and used')
+                             ' named after --diagram-file will be created and'
+                             ' used.')
     parser.add_argument('--wall-height', type=int, default=None,
                         help='default height in feet of the walls if not'
                              ' not specified in the wall-file.')
@@ -110,7 +111,7 @@ def parse_args(cli_args):
                 os.path.dirname(args.wall_file), 'rooms')
 
     if args.update_wall_file and args.wall_file is None:
-        args.wall_file = 'wall_height.md'
+        args.wall_file = f"{args.diagram_file.rsplit('.', 1)[0]}.md"
 
     if (args.wall_file and args.wall_file != '-' and
             args.wall_file == os.path.basename(args.wall_file)):

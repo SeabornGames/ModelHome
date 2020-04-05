@@ -51,10 +51,11 @@ def parse_args(cli_args):
     parser.add_argument('--diagram-file', '-d', default=None,
                         help='path to the output the diagram-file which'
                              ' defaults to the input file')
-    parser.add_argument('--wall-file', '-w', default='wall_height.md',
+    parser.add_argument('--wall-file', '-w', default=None,
                         help='path to the wall-file which is a seaborn_table'
                              ' file defining the wall, door, and window'
-                             ' height')
+                             ' height. Defaults to the same as the '
+                             ' --input-file with the markdown extension.')
     parser.add_argument('--wall-clear', action='store_true', default=False,
                          help='recreate wall file from scratch')
 
@@ -118,6 +119,9 @@ def parse_args(cli_args):
             args.height = 400
         if args.width is None:
             args.width = 200
+
+    if args.wall_file is None:
+        args.wall_file = f'{args.diagram_file.rsplit(".", 1)[0]}.md'
 
     if (args.wall_file and args.wall_file != '-' and
             args.wall_file == os.path.basename(args.wall_file)):
