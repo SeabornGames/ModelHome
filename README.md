@@ -109,15 +109,28 @@ Example:
 ```
 * Also see example file in examples/floor1.txt
 
-Each character represents 3" by 6", so the example below represents 2 foot by
-2 foot room with a 1.5 feet window and a 1 foot door.
-
+Each character represents 3" by 6", so the example below represents 2'x2' room 
+with a 1.5' window and 1' door.
 Example:
 ```
 ╔──────╗
 ║      █
 ║      █
 ╚══════╝
+
+```
+
+In this example there is a 4'x4' room with a 3' window and 2' door.
+Example:
+```
+╔═────────────═╗
+║              ║
+║              █
+║              █
+║              █
+║              █
+║              ║
+╚══════════════╝
 
 ```
 
