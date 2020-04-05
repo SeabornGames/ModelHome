@@ -210,7 +210,7 @@ class SVGFile(object):
     def addMetadata(self, md):
         txt = self.METADATA.format(
             **md, date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-        txt += "Command line (remove spaces beteen dashes): %s\n" % md["cli"].replace("--", "- -")
+        txt += "Command line (remove spaces between dashes): %s\n" % md["cli"].replace("--", "- -")
 
         if md["url"]:
             txt+= "Url: %s\n" % md["url"]

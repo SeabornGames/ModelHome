@@ -23,6 +23,11 @@ class Diagram:
             self.parse_file(input_file)
         self.grid = self.create_grid()
 
+    def get_room(self, room_name):
+        for room in self.rooms:
+            if room.name == room_name:
+                return room
+
     def create_grid(self):
         grid = []
         odd = even = ''

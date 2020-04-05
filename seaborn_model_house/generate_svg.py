@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 from seaborn_model_house.diagram import Diagram
 from seaborn_model_house.wall_table import WallTable
-from seaborn_model_house.boxes import Boxes, edges, svgutil
+from seaborn_model_house.render_box import RenderBox
 
 
 def main(cli_args=sys.argv[1:]):
@@ -15,24 +15,35 @@ def main(cli_args=sys.argv[1:]):
     if wall_table and args.update_wall_file:
         wall_table.update_wall_file(diagram)
 
-    if args.output_file:
-        box = setup_svg_file(args.output_file)
+    box = RenderBox(args.output_file) if args.output_file else None
+    rooms = get_rooms_to_render(args, diagram, wall_table)
+    for room in rooms:
+        if args.output_file is None:
+            if box is not None:
+                box.close()
+            box = RenderBox(
+                os.path.join(args.output_folder, f'{room.lower()}.svg'))
+        if diagram:
+            box.render_room_floor(diagram.get_room(room))
+        for row in (wall_table or []):
+            if (row['room_0'] == room or
+                    (row['room_1'] == room and row['room_0'] not in rooms)):
+                box.render_room_wall(row)
+    box.close()
 
-    # todo put real code here
-    if args.output_file:
-        with open(args.output_file, 'w') as fn:
-            fn.write("Place Holder")
 
-
-def setup_svg_file(output_file, *args, doc=''):
-    box = Boxes()
-    box.addSettingsArgs(edges.FingerJointSettings)
-    box.parseArgs([])
-    box.output = output_file
-    if doc:
-        svgutil.SVGFile.METADATA = doc
-    box.open()
-    return box
+def get_rooms_to_render(args, diagram, wall_table):
+    rooms = args.filter_rooms
+    if rooms is None and diagram is not None:
+        rooms = diagram.rooms
+    if rooms is None and wall_table is not None:
+        rooms = [row['room_0'] for row in wall_table]
+        rooms+= [row['room_1'] for row in wall_table if row['room_1']]
+    rooms = list(set(rooms))
+    for exclude in args.exclude_rooms:
+        if exclude in rooms:
+            rooms.remove(exclude)
+    return rooms
 
 
 def parse_args(cli_args):
