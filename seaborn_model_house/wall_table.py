@@ -6,9 +6,9 @@ from .diagram import Diagram
 
 
 class WallTable:
-    WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1', 'x', 'y',
-                         'symbols', 'height_1', 'height_2', 'window_bottom',
-                         'window_top', 'door']
+    WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1', 'x0', 'x1',
+                         'y0', 'y1', 'symbols', 'height_1', 'height_2',
+                         'window_bottom', 'window_top', 'door']
     EMPTY_CELLS = [Diagram.CHECKER, Diagram.TEN_CHECKER, Diagram.BLANK]
 
     def __init__(self, wall_file, clear=False):
@@ -35,11 +35,11 @@ class WallTable:
         def update_wall(wall):
             for row in self.wall_table:
                 if row['status'] == 'missing':
-                    matches = [k for k in ['horizontal', 'x', 'y', 'room_0',
-                                           'room_1', 'symbols', 'symbols',
-                                           'symbols']
+                    matches = [k for k in ['horizontal', 'x0', 'x1', 'y0', 'y1',
+                                           'room_0', 'room_1', 'symbols',
+                                           'symbols', 'symbols']
                                if wall.get(k) == row.get(k)]
-                    if len(matches) > 5:
+                    if len(matches) > 6:
                         row.update(wall)
                         row['status'] = 'used'
                         return True
@@ -48,14 +48,19 @@ class WallTable:
         for wall in horizontal + vertical:
             if not update_wall(wall):
                 self.wall_table.append(dict(status='new', **wall))
-        self.wall_table.sort_by_key(('room_0', 'y', 'x', 'horizontal'))
+        self.wall_table.sort_by_key(('room_0', 'y0', 'x0', 'horizontal'))
         self.wall_table.obj_to_file(self.wall_file, align='left',
                                     quote_numbers=False)
 
     def extract_horizontal_walls(self, grid, rooms):
-        for v in [WallCell.vertical, WindowCell.vertical] + list(
-                VirtualCell.characters):
+        target_cells = [DoorCell.horizontal, WindowCell.horizontal,
+                        WallCell.horizontal]
+        intersects = [WallCell.top_intersect, WallCell.bottom_intersect,
+                      WallCell.internal]
+        for v in [WallCell.vertical, WindowCell.vertical, DoorCell.vertical
+                  ] + list(VirtualCell.characters):
             grid = grid.replace(v, ' ')
+
         walls = []
         grid = grid.split('\n')
         for y in range(len(grid)):
@@ -64,32 +69,39 @@ class WallTable:
                 cell = grid[y][x]
                 if cell not in self.EMPTY_CELLS:
                     symbols += cell
-                if cell in self.EMPTY_CELLS or x == len(grid[y])-1:
+                if cell not in target_cells or x == len(grid[y]) - 1:
                     if len(symbols) > 1:
                         x_start = x - len(symbols) + 1
                         # these x and y are 1 offset to match editors
-                        wall = dict(x=x_start,
-                                    y=y + 1,
+                        wall = dict(x0=x_start + 1,
+                                    x1=x + 1,
+                                    y0=y + 1,
                                     symbols=symbols,
                                     horizontal=True)
                         wall_rooms = self.extract_rooms(
-                            x_start, x - 1, y, y + 1, rooms)
+                            x_start + 1, x - 1, y, y + 1, rooms)
                         if not wall_rooms:
                             print("WARNING: failed to find room for horizontal"
-                                  " wall x: %s to %s and y: %s symbols: %s" % (
-                                      x_start, x + 1, y + 1, symbols))
+                                  " wall x: %s - %s and y: %s symbols: %s" % (
+                                      x_start + 1, x + 1, y + 1, symbols))
                         for i, room in enumerate(wall_rooms):
                             wall[f'room_{i}'] = room
                         walls.append(wall)
+                        if symbols[-1] in intersects:
+                            symbols = symbols[-1]
+                        else:
+                            symbols = ''
+                elif cell in self.EMPTY_CELLS:
                     symbols = ''
         return walls
 
     def extract_vertical_walls(self, grid, rooms):
-        vertical_cells = [DoorCell.vertical, VirtualCell.vertical,
-                          WindowCell.vertical, WallCell.vertical]
-
-        for h in [WallCell.horizontal,
-                  WindowCell.horizontal] + list(VirtualCell.characters):
+        target_cells = [DoorCell.vertical, WindowCell.vertical,
+                        WallCell.vertical]
+        intersects = [WallCell.left_intersect, WallCell.right_intersect,
+                      WallCell.internal]
+        for h in [WallCell.horizontal, WindowCell.horizontal,
+                  DoorCell.horizontal] + list(VirtualCell.characters):
             grid = grid.replace(h, ' ')
 
         walls = []
@@ -100,34 +112,32 @@ class WallTable:
                 cell = grid[y][x]
                 if cell not in self.EMPTY_CELLS:
                     symbols += cell
-                if cell not in vertical_cells or y == len(grid)-1:
+                if cell not in target_cells or y == len(grid) - 1:
                     if len(symbols) > 1:
-                        # y_start = y - len(symbols)
-                        # # this is because we only started with vertical cells
-                        # symbols = grid[y_start - 1][x] + symbols
-                        y_start = y - len(symbols) + 2
-                        symbols = grid[y_start - 2][x] + symbols
-                        symbols = self.convert_vertical_to_horizontal(symbols)
+                        y_start = y - len(symbols) + 1
+                        _symbols = self.convert_vertical_to_horizontal(symbols)
                         # these x and y are 1 offset to match editors
-                        wall = dict(x=x+1,
-                                    y=y_start,
-                                    symbols=symbols.strip(),
+                        wall = dict(x0=x + 1,
+                                    y0=y_start + 1,
+                                    y1=y + 1,
+                                    symbols=_symbols,
                                     horizontal=False)
                         wall_rooms = self.extract_rooms(
-                            x, x + 1, y_start, y - 1, rooms)
-
-                        # todo remove this hack
+                            x, x + 1, y_start + 1, y - 1, rooms)
+                        # todo remove this hack for stairs
                         if not wall_rooms and symbols == '╬══╩':
                             wall_rooms = ['Stairs']
-
                         if not wall_rooms:
                             print("WARNING: failed to find room for vertical"
-                                  " wall y: %s to %s and x: %s symbols: '%s'" % (
-                                      y_start, y + 1, x + 1, symbols))
+                                  " wall y: %s - %s and x: %s symbols: '%s'" % (
+                                      y_start + 1, y + 1, x + 1, _symbols))
                         for i, room in enumerate(wall_rooms):
                             wall[f'room_{i}'] = room
                         walls.append(wall)
-                        symbols = ''
+                        if symbols[-1] in intersects:
+                            symbols = symbols[-1]
+                        else:
+                            symbols = ''
                     elif cell in self.EMPTY_CELLS:
                         symbols = ''
         return walls
