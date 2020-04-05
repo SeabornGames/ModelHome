@@ -6,9 +6,10 @@ from .diagram import Diagram
 
 
 class WallTable:
-    WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1', 'x0', 'x1',
-                         'y0', 'y1', 'symbols', 'height_1', 'height_2',
-                         'window_bottom', 'window_top', 'door']
+    WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1',
+                         'x0', 'x1', 'y0', 'y1', 'symbols', 'height_1',
+                         'height_2', 'window_bottom', 'window_top', 'door',
+                         'length']
     EMPTY_CELLS = [Diagram.CHECKER, Diagram.TEN_CHECKER, Diagram.BLANK]
 
     def __init__(self, wall_file, clear=False):
@@ -36,8 +37,8 @@ class WallTable:
             for row in self.wall_table:
                 if row['status'] == 'missing':
                     matches = [k for k in ['horizontal', 'x0', 'x1', 'y0', 'y1',
-                                           'room_0', 'room_1', 'symbols',
-                                           'symbols', 'symbols']
+                                           'room_0', 'room_1', 'length',
+                                           'symbols', 'symbols', 'symbols']
                                if wall.get(k) == row.get(k)]
                     if len(matches) > 6:
                         row.update(wall)
@@ -72,10 +73,10 @@ class WallTable:
                 if cell not in target_cells or x == len(grid[y]) - 1:
                     if len(symbols) > 1:
                         x_start = x - len(symbols) + 1
-                        # these x and y are 1 offset to match editors
                         wall = dict(x0=x_start + 1,
                                     x1=x + 1,
                                     y0=y + 1,
+                                    length=len(symbols)/4.0,
                                     symbols=symbols,
                                     horizontal=True)
                         wall_rooms = self.extract_rooms(
@@ -116,10 +117,10 @@ class WallTable:
                     if len(symbols) > 1:
                         y_start = y - len(symbols) + 1
                         _symbols = self.convert_vertical_to_horizontal(symbols)
-                        # these x and y are 1 offset to match editors
                         wall = dict(x0=x + 1,
                                     y0=y_start + 1,
                                     y1=y + 1,
+                                    length=len(symbols)/4.0,
                                     symbols=_symbols,
                                     horizontal=False)
                         wall_rooms = self.extract_rooms(

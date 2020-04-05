@@ -175,6 +175,22 @@ The columns within this table are:
     Note, rooms are found by their name and walls are found by the names of
     the rooms they touch
 
+- room_0, room_1
+    (name of the rooms the wall is between)
+    read-only
+
+- x0, x1, y0, y1
+    (integer)
+    read-only
+    This represents the X0 to X1 and Y0 to Y1 location of the first character
+    of the wall.  This is based 1 index to make it easy to locate in editors.
+
+- symbols
+    (characters)
+    read-only
+    This represents the wall as seen in the diagram file.
+    Vertical walls will be rotated counter clockwise.
+
 - height_1
     (float of the number of feet)
     If blank this will equal the default.
@@ -200,24 +216,10 @@ The columns within this table are:
     If blank this will equal the default.
     This represents the height at the top of the door.
 
-- color
-    (black, red, green, blue, purple)
-    This represents the color of the wall within the SVG.
-
-- room_0, room_1
-    (name of the rooms the wall is between)
+- length
+    (float)
     read-only
-
-- x, y
-    (integer)
-    read-only
-    This represents the X and Y location of the first character of the wall.
-
-- symbols
-    (characters)
-    read-only
-    This represents the wall as seen in the diagram file.
-    Vertical walls will be rotated counter clockwise.
+    This is how long the wall is in feet.
 
 
 Stairs:
