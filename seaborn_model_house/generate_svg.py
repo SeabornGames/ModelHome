@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 
 from seaborn_model_house.diagram import Diagram
 from seaborn_model_house.wall_table import WallTable
+from seaborn_model_house.boxes import Boxes, edges, svgutil
 
 
 def main(cli_args=sys.argv[1:]):
@@ -14,10 +15,24 @@ def main(cli_args=sys.argv[1:]):
     if wall_table and args.update_wall_file:
         wall_table.update_wall_file(diagram)
 
+    if args.output_file:
+        box = setup_svg_file(args.output_file)
+
     # todo put real code here
     if args.output_file:
         with open(args.output_file, 'w') as fn:
             fn.write("Place Holder")
+
+
+def setup_svg_file(output_file, *args, doc=''):
+    box = Boxes()
+    box.addSettingsArgs(edges.FingerJointSettings)
+    box.parseArgs([])
+    box.output = output_file
+    if doc:
+        svgutil.SVGFile.METADATA = doc
+    box.open()
+    return box
 
 
 def parse_args(cli_args):

@@ -50,20 +50,9 @@ class BaseTest(unittest.TestCase):
 
 
 class BoxesTest(BaseTest):
-    def setup_box(self, *args):
-        from seaborn_model_house.boxes import Boxes, edges, svgutil
-
-        box = Boxes()
-        box.addSettingsArgs(edges.FingerJointSettings)
-        box.parseArgs(args)
-        # todo resolve why parseArgs pops the last argument
-        box.output = self.result_file()
-        svgutil.SVGFile.METADATA = f'\nCreated by Unittest: {self.name}\n'
-        box.open()
-        return box
-
     def test_installation(self):
-        box = self.setup_box()
+        box = generate_svg.setup_svg_file(
+            self.result_file(), doc=f'\nCreated by Unittest: {self.name}\n')
         x = y = h = 100.0
 
         d2 = d3 = None
@@ -78,7 +67,8 @@ class BoxesTest(BaseTest):
         self.assert_result_file(self.expected_file(), self.result_file())
 
     def test_uneven_height_box(self):
-        box = self.setup_box()
+        box = generate_svg.setup_svg_file(
+            self.result_file(), doc=f'\nCreated by Unittest: {self.name}\n')
         x = y = 100.0
         heights = [50.0, 50.0, 100.0, 100.0]
         box.bottom_edge = 'F'
