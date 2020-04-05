@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-from seaborn_model_house.main import main
+from seaborn_model_house import layout_model, generate_svg
 
 PATH = os.path.split(os.path.abspath(__file__))[0]
 log = logging.getLogger(__file__)
