@@ -92,7 +92,7 @@ class WallTable:
                                     symbols=symbols,
                                     horizontal=True)
                         wall_rooms = self.extract_rooms(
-                            x_start + 1, x - 1, y, y + 1, rooms)
+                            x_start, x, y, y + 1, rooms)
                         if not wall_rooms:
                             print("WARNING: failed to find room for horizontal"
                                   " wall x: %s - %s and y: %s symbols: %s" % (
@@ -135,7 +135,7 @@ class WallTable:
                                     symbols=_symbols,
                                     horizontal=False)
                         wall_rooms = self.extract_rooms(
-                            x, x + 1, y_start + 1, y - 1, rooms)
+                            x, x + 1, y_start, y, rooms)
                         # todo remove this hack for stairs
                         if not wall_rooms and symbols == '╬║╠':
                             wall_rooms = ['Stairs']
@@ -181,6 +181,13 @@ class WallTable:
 
     @staticmethod
     def extract_rooms(x_start, x_end, y_start, y_end, rooms):
+        if x_end - x_start > 2:
+            x_end -= 1
+            x_start +=1
+        if y_end - y_start > 2:
+            y_end -= 1
+            y_start += 1
+
         def room_found(room):
             if not room.walls:
                 return False
