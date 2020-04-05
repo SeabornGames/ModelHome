@@ -130,6 +130,58 @@ class BoxesTest(BaseTest):
         self.assert_result_file(self.expected_file(), self.result_file())
 
 
+class LayoutModelTest(BaseTest):
+    def test_create_empty_diagram_file(self):
+        layout_model.main([
+            '--diagram-file', self.result_file('txt'),
+            '--width', '100',
+            '--height', '100',
+            '--checker', '--ruler',
+            '--backup-folder', '',
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
+    def test_clean_diagram_file(self):
+        layout_model.main([
+            '--diagram-file', self.result_file('txt'),
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--wall-file', self.result_file('md'),
+            '--backup-folder', '',
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
+    def test_create_wall_file(self):
+        if os.path.exists(self.result_file('md')):
+            os.remove(self.result_file('md'))
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
+            '--wall-file', self.result_file('md'),
+            '--backup-folder', '',
+        ])
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
+            '--wall-file', self.result_file('md'),
+            '--backup-folder', '',
+        ])
+        self.assert_result_file(self.expected_file('md'),
+                                self.result_file('md'))
+
+    def test_remove_objects(self):
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
+            '--wall-file', self.result_file('md'),
+            '--backup-folder', '',
+            '--remove-object',
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
+
 class GenerateSvgTest(BaseTest):
     def test_create_svg_file_with_diagram_only(self):
         generate_svg.main([
@@ -152,54 +204,6 @@ class GenerateSvgTest(BaseTest):
             '--output-file', self.result_file(),
         ])
         self.assert_result_file(self.expected_file(), self.result_file())
-
-
-class LayoutModelTest(BaseTest):
-
-    def test_create_empty_diagram_file(self):
-        layout_model.main([
-            '--diagram-file', self.result_file('txt'),
-            '--width', '100',
-            '--height', '100',
-            '--checker', '--ruler'
-        ])
-        self.assert_result_file(self.expected_file('txt'),
-                                self.result_file('txt'))
-
-    def test_clean_diagram_file(self):
-        layout_model.main([
-            '--diagram-file', self.result_file('txt'),
-            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
-            '--wall-file', self.result_file('md'),
-        ])
-        self.assert_result_file(self.expected_file('txt'),
-                                self.result_file('txt'))
-
-    def test_create_wall_file(self):
-        if os.path.exists(self.result_file('md')):
-            os.remove(self.result_file('md'))
-        layout_model.main([
-            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
-            '--diagram-file', self.result_file('txt'),
-            '--wall-file', self.result_file('md')
-        ])
-        layout_model.main([
-            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
-            '--diagram-file', self.result_file('txt'),
-            '--wall-file', self.result_file('md')
-        ])
-        self.assert_result_file(self.expected_file('md'),
-                                self.result_file('md'))
-
-    def test_remove_objects(self):
-        layout_model.main([
-            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
-            '--diagram-file', self.result_file('txt'),
-            '--wall-file', self.result_file('md'),
-            '--remove-object'
-        ])
-        self.assert_result_file(self.expected_file('txt'),
-                                self.result_file('txt'))
 
 
 if __name__ == '__main__':

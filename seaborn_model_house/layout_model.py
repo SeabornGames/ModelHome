@@ -133,7 +133,7 @@ def parse_args(cli_args):
 
 
 def backup_files(files, backup_folder):
-    if not os.path.exists(backup_folder):
+    if backup_folder and not os.path.exists(backup_folder):
         os.mkdir(backup_folder)
     for file in files:
         if backup_folder and file and os.path.exists(file):

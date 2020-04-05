@@ -56,6 +56,9 @@ def parse_args(cli_args):
                         help='if specified then this will override the'
                              ' --output-folder and put all the rooms in a'
                              ' single file')
+    parser.add_argument('--scale', default=20.0, type=float,
+                        help='The number of mm in the output to equal a foot'
+                             ' in the model')
     args = parser.parse_args(cli_args)
 
     if args.diagram_file is None and args.wall_file is None:
