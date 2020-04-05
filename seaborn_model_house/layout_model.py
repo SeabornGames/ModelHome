@@ -109,6 +109,8 @@ def parse_args(cli_args):
     if args.input_file and args.diagram_file is None:
         args.diagram_file = args.input_file
     if args.input_file is None:
+        args.wall_file = None
+    if args.input_file is None:
         if args.diagram_file is None:
             print('One of the following options must be specified, --input-file'
                   ' or --diagram-file are ')
@@ -118,7 +120,7 @@ def parse_args(cli_args):
         if args.width is None:
             args.width = 200
 
-    if (args.wall_file != '-' and
+    if (args.wall_file and args.wall_file != '-' and
             args.wall_file == os.path.basename(args.wall_file)):
         args.wall_file = os.path.join(os.path.dirname(args.diagram_file),
                                       args.wall_file)
@@ -134,7 +136,7 @@ def backup_files(files, backup_folder):
     if not os.path.exists(backup_folder):
         os.mkdir(backup_folder)
     for file in files:
-        if backup_folder and os.path.exists(file):
+        if backup_folder and file and os.path.exists(file):
             copyfile(file, os.path.join(backup_folder, os.path.basename(file)))
 
 

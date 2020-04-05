@@ -42,13 +42,11 @@ class BaseTest(unittest.TestCase):
     def name(self):
         return self.id().split('.')[-1]
 
-    @property
-    def expected_file(self):
-        return self.get_test_data_path('expected', f'{self.name}.svg')
+    def expected_file(self, ext='svg'):
+        return self.get_test_data_path('expected', f'{self.name}.{ext}')
 
-    @property
-    def result_file(self):
-        return self.get_test_data_path('result', f'{self.name}.svg')
+    def result_file(self, ext='svg'):
+        return self.get_test_data_path('result', f'{self.name}.{ext}')
 
 
 class BoxesTest(BaseTest):
@@ -59,7 +57,7 @@ class BoxesTest(BaseTest):
         box.addSettingsArgs(edges.FingerJointSettings)
         box.parseArgs(args)
         # todo resolve why parseArgs pops the last argument
-        box.output = self.result_file
+        box.output = self.result_file()
         svgutil.SVGFile.METADATA = f'\nCreated by Unittest: {self.name}\n'
         box.open()
         return box
@@ -77,7 +75,7 @@ class BoxesTest(BaseTest):
                             move="right")
         box.rectangularWall(x, y, "ffff", bedBolts=[d2, d3, d2, d3])
         box.close()
-        self.assert_result_file(self.expected_file, self.result_file)
+        self.assert_result_file(self.expected_file(), self.result_file())
 
     def test_uneven_height_box(self):
         box = self.setup_box()
@@ -129,15 +127,51 @@ class BoxesTest(BaseTest):
             box.trapezoidWall(x, h1, h0, "FFeF",
                               move="right" if h1 and h0 else "right only")
         box.close()
-        self.assert_result_file(self.expected_file, self.result_file)
+        self.assert_result_file(self.expected_file(), self.result_file())
 
 
 class GenerateSvgTest(BaseTest):
     pass
 
 
-class LayoutModel(BaseTest):
-    pass
+class LayoutModelTest(BaseTest):
+
+    def test_create_empty_diagram_file(self):
+        layout_model.main([
+            '--diagram-file', self.result_file('txt'),
+            '--width', '100',
+            '--height', '100',
+            '--checker', '--ruler'
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
+    def test_clean_diagram_file(self):
+        layout_model.main([
+            '--diagram-file', self.result_file('txt'),
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--wall-file', self.result_file('md'),
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
+    def test_create_wall_file(self):
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--wall-file', self.result_file('md')
+        ])
+        self.assert_result_file(self.expected_file('md'),
+                                self.result_file('md'))
+
+    def test_remove_objects(self):
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
+            '--wall-file', self.result_file('md'),
+            '--remove-object'
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
 
 
 if __name__ == '__main__':
