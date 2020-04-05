@@ -53,7 +53,7 @@ class WallTable:
                 self.wall_table.append(dict(status='new', **wall))
 
         if not keep_missing_walls:
-            for i in range(len(self.wall_table)-1, -1, -1):
+            for i in range(len(self.wall_table) - 1, -1, -1):
                 wall = self.wall_table[i]
                 if wall.get('status') == 'missing' and not any(
                         [wall.get(k) for k in ['height_1', 'height_2', 'door',
@@ -68,7 +68,7 @@ class WallTable:
         target_cells = [DoorCell.horizontal, WindowCell.horizontal,
                         WallCell.horizontal]
         intersects = [WallCell.top_intersect, WallCell.bottom_intersect,
-                      WallCell.internal]
+                      WallCell.internal, WallCell.horizontal_break]
         for v in VirtualCell.characters:
             grid = grid.replace(v, ' ')
 
@@ -88,7 +88,7 @@ class WallTable:
                         wall = dict(x0=x_start + 1,
                                     x1=x + 1,
                                     y0=y + 1,
-                                    length=len(symbols)/4.0,
+                                    length=len(symbols) / 4.0,
                                     symbols=symbols,
                                     horizontal=True)
                         wall_rooms = self.extract_rooms(
@@ -112,7 +112,7 @@ class WallTable:
         target_cells = [DoorCell.vertical, WindowCell.vertical,
                         WallCell.vertical]
         intersects = [WallCell.left_intersect, WallCell.right_intersect,
-                      WallCell.internal]
+                      WallCell.internal, WallCell.vertical_break]
         for h in VirtualCell.characters:
             grid = grid.replace(h, ' ')
 
@@ -131,13 +131,13 @@ class WallTable:
                         wall = dict(x0=x + 1,
                                     y0=y_start + 1,
                                     y1=y + 1,
-                                    length=len(symbols)/4.0,
+                                    length=len(symbols) / 2.0,
                                     symbols=_symbols,
                                     horizontal=False)
                         wall_rooms = self.extract_rooms(
                             x, x + 1, y_start + 1, y - 1, rooms)
                         # todo remove this hack for stairs
-                        if not wall_rooms and symbols == '╬══╩':
+                        if not wall_rooms and symbols == '╬║╠':
                             wall_rooms = ['Stairs']
                         if not wall_rooms:
                             print("WARNING: failed to find room for vertical"
@@ -157,22 +157,27 @@ class WallTable:
     @staticmethod
     def convert_vertical_to_horizontal(symbols):
         # rotate wall counter clockwise
-        replacements = {}
+        first, last = symbols[0], symbols[-1]
         for cls in [WallCell, WindowCell, VirtualCell, DoorCell]:
-            replacements[cls.vertical] = cls.horizontal + cls.horizontal
-            for _old, _new in [('top_left_corner', 'bottom_left_corner'),
-                               ('top_intersect', 'left_intersect'),
-                               ('top_right_corner', 'top_left_corner'),
-                               ('bottom_left_corner', 'bottom_right_corner'),
-                               ('bottom_intersect', 'right_intersect'),
-                               ('bottom_right_corner', 'top_right_corner'),
-                               ('left_intersect', 'bottom_intersect'),
-                               ('right_intersect', 'top_intersect')
-                               ]:
-                if getattr(cls, _old, None) and getattr(cls, _new, None):
-                    replacements[getattr(cls, _old)] = getattr(cls, _new)
-
-        return ''.join([replacements.get(s, s) for s in symbols])
+            symbols = symbols.replace(cls.vertical,
+                                      cls.horizontal + cls.horizontal)
+            for old_key, new_key in [
+                    ('top_left_corner', 'bottom_left_corner'),
+                    ('top_intersect', 'left_intersect'),
+                    ('top_right_corner', 'top_left_corner'),
+                    ('bottom_left_corner', 'bottom_right_corner'),
+                    ('bottom_intersect', 'right_intersect'),
+                    ('bottom_right_corner', 'top_right_corner'),
+                    ('left_intersect', 'bottom_intersect'),
+                    ('right_intersect', 'top_intersect'),
+                    ('vertical_break', 'horizontal_break')]:
+                _old = getattr(cls, old_key, None)
+                _new = getattr(cls, new_key, None)
+                if _old and _new and _old == first:
+                    symbols = _new + cls.horizontal + symbols[1:]
+                if _old and _new and _old == last:
+                    symbols = symbols[:-1] + cls.horizontal + _new
+        return symbols
 
     @staticmethod
     def extract_rooms(x_start, x_end, y_start, y_end, rooms):

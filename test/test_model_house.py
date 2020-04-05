@@ -24,8 +24,8 @@ class BaseTest(unittest.TestCase):
 
         for i in range(len(result)):
             # todo remove this when the surface problem is fixed
-            expected[i] = expected[i].split('id="surface')[0]
-            result[i] = result[i].split('id="surface')[0]
+            expected[i] = expected[i].split('id="surface')[0].rstrip()
+            result[i] = result[i].split('id="surface')[0].rstrip()
             self.assertEqual(expected[i], result[i], message)
 
     @staticmethod
