@@ -1,14 +1,15 @@
 import os
-import sys
 from seaborn_table import SeabornTable
 
 from .cell import VirtualCell, WindowCell, WallCell, DoorCell
+from .diagram import Diagram
 
 
 class WallTable:
     WALL_FILE_COLUMNS = ['horizontal', 'status', 'room_0', 'room_1', 'x', 'y',
                          'symbols', 'height_1', 'height_2', 'window_bottom',
                          'window_top', 'door']
+    EMPTY_CELLS = [Diagram.CHECKER, Diagram.TEN_CHECKER, Diagram.BLANK]
 
     def __init__(self, wall_file, clear=False):
         self.wall_file = wall_file
@@ -61,21 +62,22 @@ class WallTable:
             symbols = ''
             for x in range(len(grid[y])):
                 cell = grid[y][x]
-                if cell != ' ':
+                if cell not in self.EMPTY_CELLS:
                     symbols += cell
-                if cell == ' ' or x == len(grid[y]):
+                if cell in self.EMPTY_CELLS or x == len(grid[y])-1:
                     if len(symbols) > 1:
-                        wall = dict(x=x - len(symbols),
-                                    y=y,
+                        x_start = x - len(symbols) + 1
+                        # these x and y are 1 offset to match editors
+                        wall = dict(x=x_start,
+                                    y=y + 1,
                                     symbols=symbols,
                                     horizontal=True)
                         wall_rooms = self.extract_rooms(
-                            x - len(symbols)+1, x-1, y, y + 1, rooms)
+                            x_start, x - 1, y, y + 1, rooms)
                         if not wall_rooms:
                             print("WARNING: failed to find room for horizontal"
-                                  " wall from x: %s to %s and y: %s" %
-                                  (x - len(symbols), x, y))
-                            sys.exit(1)
+                                  " wall x: %s to %s and y: %s symbols: %s" % (
+                                      x_start, x + 1, y + 1, symbols))
                         for i, room in enumerate(wall_rooms):
                             wall[f'room_{i}'] = room
                         walls.append(wall)
@@ -96,24 +98,37 @@ class WallTable:
             symbols = ''
             for y in range(len(grid)):
                 cell = grid[y][x]
-                if cell != ' ':
+                if cell not in self.EMPTY_CELLS:
                     symbols += cell
-                if cell not in vertical_cells or x == len(grid[y]):
+                if cell not in vertical_cells or y == len(grid)-1:
                     if len(symbols) > 1:
-                        y_start = y - len(symbols) + 1
-                        symbols = grid[y_start-1][x] + symbols
+                        # y_start = y - len(symbols)
+                        # # this is because we only started with vertical cells
+                        # symbols = grid[y_start - 1][x] + symbols
+                        y_start = y - len(symbols) + 2
+                        symbols = grid[y_start - 2][x] + symbols
                         symbols = self.convert_vertical_to_horizontal(symbols)
-                        wall = dict(x=x,
+                        # these x and y are 1 offset to match editors
+                        wall = dict(x=x+1,
                                     y=y_start,
                                     symbols=symbols.strip(),
                                     horizontal=False)
                         wall_rooms = self.extract_rooms(
-                            x, x + 1, y_start+1, y-1, rooms)
+                            x, x + 1, y_start, y - 1, rooms)
+
+                        # todo remove this hack
+                        if not wall_rooms and symbols == '╬══╩':
+                            wall_rooms = ['Stairs']
+
+                        if not wall_rooms:
+                            print("WARNING: failed to find room for vertical"
+                                  " wall y: %s to %s and x: %s symbols: '%s'" % (
+                                      y_start, y + 1, x + 1, symbols))
                         for i, room in enumerate(wall_rooms):
                             wall[f'room_{i}'] = room
                         walls.append(wall)
                         symbols = ''
-                    elif cell == ' ':
+                    elif cell in self.EMPTY_CELLS:
                         symbols = ''
         return walls
 
@@ -133,7 +148,6 @@ class WallTable:
                                ('right_intersect', 'top_intersect')
                                ]:
                 if getattr(cls, _old, None) and getattr(cls, _new, None):
-
                     replacements[getattr(cls, _old)] = getattr(cls, _new)
 
         return ''.join([replacements.get(s, s) for s in symbols])
