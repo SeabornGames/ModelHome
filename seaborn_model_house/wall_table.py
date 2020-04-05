@@ -179,6 +179,19 @@ class WallTable:
                     symbols = symbols[:-1] + cls.horizontal + _new
         return symbols
 
+    def assign_default(self, args):
+        for row in self.wall_table:
+            if row['height_1'] is None:
+                row['height_1'] = args.wall_height
+            if row['height_1'] is None:
+                row['height_1'] = args.wall_height
+            if row['window_bottom'] is None:
+                row['window_bottom'] = args.window_bottom
+            if row['window_top'] is None:
+                row['window_top'] = args.window_bottom
+            if row['door_height'] is None:
+                row['door_height'] = args.door
+
     @staticmethod
     def extract_rooms(x_start, x_end, y_start, y_end, rooms):
         if x_end - x_start > 2:

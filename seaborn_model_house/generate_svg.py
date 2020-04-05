@@ -12,8 +12,11 @@ def main(cli_args=sys.argv[1:]):
 
     diagram = Diagram(args.diagram_file) if args.diagram_file else None
     wall_table = WallTable(wall_file=args.wall_file) if args.wall_file else None
-    if wall_table and args.update_wall_file:
-        wall_table.update_wall_file(diagram)
+    if wall_table:
+        if args.update_wall_file:
+            wall_table.update_wall_file(diagram)
+            wall_table.save()
+        wall_table.assign_default(args)
 
     box = ModelHouseBox(args.output_file) if args.output_file else None
     rooms = get_rooms_to_render(args, diagram, wall_table)
@@ -84,7 +87,7 @@ def parse_args(cli_args):
                         help='if specified then this will override the'
                              ' --output-folder and put all the rooms in a'
                              ' single file')
-    parser.add_argument('--scale', default=20.0, type=float,
+    parser.add_argument('--scale', default=24.0, type=float,
                         help='The number of mm in the output to equal a foot'
                              ' in the model')
     parser.add_argument('--filter-rooms', default=None, nargs='+',

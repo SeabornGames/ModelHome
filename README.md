@@ -72,7 +72,7 @@ Using the characters below the user can specify walls, virtual walls, windows,
 doors, and objects.
 
 Door Characters:          ▤ (horizontal) █ (vertical)
-Wall Characters:          ═ ╬ ╔ ╦ ╗ ╚ ╩ ╝ ╠ ║ ╣
+Wall Characters:          ═ ╬ ╔ ╦ ╗ ╚ ╩ ╝ ╠ ║ ╣ ╪ ╫
 Window Characters:        ─ ┼ ╟ ╤     ╧   ╟ │ ╢
 Virtual Wall Characters:  ┈ ⟊ ┌ ╤ ┐ └ ╧ ┘ ╟ ┆ ╢
 Object Characters:        ━ ╋ ┏ ┳ ┓ ┗ ┻ ┛ ┣ ┃ ┫
@@ -235,8 +235,22 @@ The columns within this table are:
     This is how long the wall is in feet.
 
 
-Stairs:
--------
+Stairs
+------
 The room name STAIRS and SPIRAL STAIRS are reserved for specifying stairs.
+
+
+
+Rendering Notes
+---------------
+
+--scale, the glowforge bed is 11x19.5", at the very least your longest wall
+should be less than 19", but you can put horzontal and veritcal breaks ╪ ╫
+in a wall to break it up.
+
+Each character in the wall file will be equal to 1/4 of your --scale value.
+
+
+
 
 
