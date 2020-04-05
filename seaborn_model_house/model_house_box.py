@@ -2,7 +2,7 @@
 from seaborn_model_house.boxes import Boxes, edges, svgutil
 
 
-class RenderBox(Boxes):
+class ModelHouseBox(Boxes):
     def __init__(self, output_file, *args):
         super().__init__()
         self.addSettingsArgs(edges.FingerJointSettings)

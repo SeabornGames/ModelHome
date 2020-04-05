@@ -4,7 +4,7 @@ from argparse import ArgumentParser
 
 from seaborn_model_house.diagram import Diagram
 from seaborn_model_house.wall_table import WallTable
-from seaborn_model_house.render_box import RenderBox
+from seaborn_model_house.model_house_box import ModelHouseBox
 
 
 def main(cli_args=sys.argv[1:]):
@@ -15,13 +15,13 @@ def main(cli_args=sys.argv[1:]):
     if wall_table and args.update_wall_file:
         wall_table.update_wall_file(diagram)
 
-    box = RenderBox(args.output_file) if args.output_file else None
+    box = ModelHouseBox(args.output_file) if args.output_file else None
     rooms = get_rooms_to_render(args, diagram, wall_table)
     for room in rooms:
         if args.output_file is None:
             if box is not None:
                 box.close()
-            box = RenderBox(
+            box = ModelHouseBox(
                 os.path.join(args.output_folder, f'{room.lower()}.svg'))
         if diagram:
             box.render_room_floor(diagram.get_room(room))

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="40mm" version="1.1" viewBox="0 -10 90 40" width="90mm">
-<!--Created by RenderBoxCommand line (remove spaces between dashes): boxes RenderBox 
+<!--Created by RenderBoxCommand line (remove spaces between dashes): boxes ModelHouseBox 
 --><defs>
 <g>
 <symbol id="glyph0-0" overflow="visible">
@@ -16,7 +16,7 @@
 </symbol>
 </g>
 </defs>
-<g id="surface11">
+<g id="surface21">
 <path d="M -34.129297 -1.407129 H 65.870703 V 8.592871 H -34.129297 Z M -0.000390625 -0.000878906 " style="fill:none;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" transform="matrix(1.0000,0.0000,0.0000,-1.0000,44.1293,16.9922)" />
 <path d="M -0.000390625 -0.000878906 H 31.737891 V 7.182715 H -0.000390625 Z M -0.000390625 -0.000878906 " style="fill:none;stroke-width:0.2;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(100%,100%,100%);stroke-opacity:1;stroke-miterlimit:10;" transform="matrix(1.0000,0.0000,0.0000,-1.0000,44.1293,16.9922)" />
 <g style="fill:rgb(0%,0%,0%);fill-opacity:1;">

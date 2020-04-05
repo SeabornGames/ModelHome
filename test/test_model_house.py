@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-from seaborn_model_house import layout_model, generate_svg, render_box
+from seaborn_model_house import layout_model, generate_svg, ModelHouseBox
 
 PATH = os.path.split(os.path.abspath(__file__))[0]
 log = logging.getLogger(__file__)
@@ -54,7 +54,7 @@ class BaseTest(unittest.TestCase):
 
 class BoxesTest(BaseTest):
     def test_installation(self):
-        box = render_box.RenderBox(self.result_file())
+        box = ModelHouseBox(self.result_file())
         x = y = h = 100.0
 
         d2 = d3 = None
@@ -69,7 +69,7 @@ class BoxesTest(BaseTest):
         self.assert_result_file(self.expected_file(), self.result_file())
 
     def test_uneven_height_box(self):
-        box = render_box.RenderBox(self.result_file())
+        box = ModelHouseBox(self.result_file())
         x = y = 100.0
         heights = [50.0, 50.0, 100.0, 100.0]
         box.bottom_edge = 'F'
