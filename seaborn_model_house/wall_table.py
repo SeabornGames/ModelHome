@@ -52,6 +52,7 @@ class WallTable:
                                     quote_numbers=False)
 
     def extract_horizontal_walls(self, grid, rooms):
+        # todo include the end of both sides of the wall
         horizontal_cells = [DoorCell.horizontal, VirtualCell.horizontal,
                             WindowCell.horizontal, WallCell.horizontal]
         for v in [WallCell.vertical, WindowCell.vertical] + list(
@@ -85,6 +86,7 @@ class WallTable:
         return walls
 
     def extract_vertical_walls(self, grid, rooms):
+        # todo include the end of both sides of the wall
         vertical_cells = [DoorCell.vertical, VirtualCell.vertical,
                           WindowCell.vertical, WallCell.vertical]
 
