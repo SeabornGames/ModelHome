@@ -52,9 +52,6 @@ class WallTable:
                                     quote_numbers=False)
 
     def extract_horizontal_walls(self, grid, rooms):
-        # todo include the end of both sides of the wall
-        horizontal_cells = [DoorCell.horizontal, VirtualCell.horizontal,
-                            WindowCell.horizontal, WallCell.horizontal]
         for v in [WallCell.vertical, WindowCell.vertical] + list(
                 VirtualCell.characters):
             grid = grid.replace(v, ' ')
@@ -86,7 +83,6 @@ class WallTable:
         return walls
 
     def extract_vertical_walls(self, grid, rooms):
-        # todo include the end of both sides of the wall
         vertical_cells = [DoorCell.vertical, VirtualCell.vertical,
                           WindowCell.vertical, WallCell.vertical]
 
@@ -105,6 +101,7 @@ class WallTable:
                 if cell not in vertical_cells or x == len(grid[y]):
                     if len(symbols) > 1:
                         y_start = y - len(symbols) + 1
+                        symbols = grid[y_start-1][x] + symbols
                         symbols = self.convert_vertical_to_horizontal(symbols)
                         wall = dict(x=x,
                                     y=y_start,
