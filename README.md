@@ -185,12 +185,12 @@ The columns within this table are:
     If blank this will equal the default.
     This represents the height of the wall at the right or bottom side.
 
-- window_1
+- window_bottom
     (float of the number of feet)
     If blank this will equal the default.
     This represents the height at the bottom of the window.
 
-- window_2
+- window_top
     (float of the window height)
     If blank this will equal the default.
     This represents the height at the top of the window.

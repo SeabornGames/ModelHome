@@ -1,4 +1,3 @@
-"""     See boxes/layouts/model_house_library/README.rst    """
 import os
 import sys
 from argparse import ArgumentParser

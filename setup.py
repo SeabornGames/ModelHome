@@ -101,5 +101,10 @@ setup(
         "Topic :: Scientific/Engineering",
         "Topic :: Scientific/Engineering :: Computer Aided Design",
     ],
+    entry_points='''
+        [console_scripts]
+        layout_model=seaborn_model_house.layout_model:main
+        generate_svg=seaborn_model_house.generate_svg:main
+    ''',
     keywords=['glowforge', 'model', 'svg', 'laser cutter', 'model house'],
 )

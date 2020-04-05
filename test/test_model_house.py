@@ -3,6 +3,8 @@ import os
 import sys
 import unittest
 
+from seaborn_model_house.main import main
+
 PATH = os.path.split(os.path.abspath(__file__))[0]
 log = logging.getLogger(__file__)
 logging.basicConfig(level=os.getenv('TEST_LOG_LEVEL', 'INFO'),
@@ -23,13 +25,15 @@ class BaseTest(unittest.TestCase):
         for i in range(len(result)):
             self.assertEqual(expected[i], result[i], message)
 
-    def get_test_data_path(self, *args):
+    @staticmethod
+    def get_test_data_path(*args):
         path = os.path.join(PATH, 'data', *args)
         if not os.path.exists(os.path.dirname(path)):
             os.mkdir(os.path.dirname(path))
         return path
 
-    def remove_file(self, file):
+    @staticmethod
+    def remove_file(file):
         os.remove(file)
         if not os.listdir(os.path.dirname(file)):
             os.rmdir(os.path.dirname(file))
@@ -97,6 +101,8 @@ class BoxesTest(BaseTest):
         box.trapezoidWall(y, h1, h2, [b, "f", "e", "f"], move="right")
         box.trapezoidWall(x, h2, h3, [b, "F", "e", "F"], move="right")
         box.trapezoidWall(y, h3, h0, [b, "f", "e", "f"], move="right")
+
+        maxh = None
         with box.saved_context():
             if b != "e":
                 box.rectangularWall(x, y, "ffff", move="up")
