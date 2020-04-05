@@ -131,7 +131,27 @@ class BoxesTest(BaseTest):
 
 
 class GenerateSvgTest(BaseTest):
-    pass
+    def test_create_svg_file_with_diagram_only(self):
+        generate_svg.main([
+            '--diagram-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--output-file', self.result_file(),
+        ])
+        self.assert_result_file(self.expected_file(), self.result_file())
+
+    def test_create_svg_file_with_wall_file_only(self):
+        generate_svg.main([
+            '--wall-file', self.get_test_data_path('wall_height.md'),
+            '--output-file', self.result_file(),
+        ])
+        self.assert_result_file(self.expected_file(), self.result_file())
+
+    def test_create_svg_file_with_wall_and_diagram(self):
+        generate_svg.main([
+            '--diagram-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--wall-file', self.get_test_data_path('wall_height.md'),
+            '--output-file', self.result_file(),
+        ])
+        self.assert_result_file(self.expected_file(), self.result_file())
 
 
 class LayoutModelTest(BaseTest):
