@@ -21,9 +21,14 @@ class WallTable:
             self.wall_table = SeabornTable(columns=self.WALL_FILE_COLUMNS)
 
     def update_wall_file(self, diagram, keep_missing_walls):
+        # diagram.remove_virtual()
         diagram.grid = diagram.create_grid()
         diagram.add_layout_to_grid()
         grid = '\n'.join(diagram.grid)
+        # todo remove when remove_virtual is done
+        for h in VirtualCell.characters:
+            grid = grid.replace(h, ' ')
+
         for room in diagram.rooms:
             room.calc_room_dimensions(diagram.layout, diagram.width * 4,
                                       diagram.height * 2)
@@ -56,7 +61,7 @@ class WallTable:
                 if wall.get('status') == 'missing' and not any(
                         [wall.get(k) for k in ['height_1', 'height_2', 'door',
                                                'window_bottom', 'window_top']]):
-                    self.wall_file.table.pop(i)
+                    self.wall_table.table.pop(i)
 
         self.wall_table.sort_by_key(('room_0', 'y0', 'x0', 'horizontal'))
         self.wall_table.obj_to_file(self.wall_file, align='left',
@@ -67,8 +72,7 @@ class WallTable:
                         WallCell.horizontal]
         intersects = [WallCell.top_intersect, WallCell.bottom_intersect,
                       WallCell.internal]
-        for v in [WallCell.vertical, WindowCell.vertical, DoorCell.vertical
-                  ] + list(VirtualCell.characters):
+        for v in VirtualCell.characters:
             grid = grid.replace(v, ' ')
 
         walls = []
@@ -81,6 +85,8 @@ class WallTable:
                     symbols += cell
                 if cell not in target_cells or x == len(grid[y]) - 1:
                     if len(symbols) > 1:
+                        if cell in self.EMPTY_CELLS:
+                            x -= 1
                         x_start = x - len(symbols) + 1
                         wall = dict(x0=x_start + 1,
                                     x1=x + 1,
@@ -110,8 +116,7 @@ class WallTable:
                         WallCell.vertical]
         intersects = [WallCell.left_intersect, WallCell.right_intersect,
                       WallCell.internal]
-        for h in [WallCell.horizontal, WindowCell.horizontal,
-                  DoorCell.horizontal] + list(VirtualCell.characters):
+        for h in VirtualCell.characters:
             grid = grid.replace(h, ' ')
 
         walls = []

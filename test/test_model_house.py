@@ -168,6 +168,16 @@ class LayoutModelTest(BaseTest):
         self.assert_result_file(self.expected_file('txt'),
                                 self.result_file('txt'))
 
+    def test_remove_virtual(self):
+        layout_model.main([
+            '--input-file', self.get_test_data_path('unclean_diagram.txt'),
+            '--diagram-file', self.result_file('txt'),
+            '--backup-folder', '',
+            '--remove-object', '--remove-virtual'
+        ])
+        self.assert_result_file(self.expected_file('txt'),
+                                self.result_file('txt'))
+
 
 class GenerateSvgTest(BaseTest):
     def test_create_svg_file_with_diagram_only(self):

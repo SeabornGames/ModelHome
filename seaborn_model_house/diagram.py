@@ -76,8 +76,8 @@ class Diagram:
                 elif c in ObjectName.characters:
                     self.name_characters[x, y] = ObjectName(c, x, y)
 
-        for v in self.layout.values():
-            v.clean(diagram=self)
+        for cell in self.layout.values():
+            cell.clean(diagram=self)
         for k in list(self.name_characters.keys()):
             v = self.name_characters.get(k)
             if v is not None:  # character was popped out with other names
@@ -88,6 +88,13 @@ class Diagram:
         self.objects.clear()
         for v in self.layout.values():
             v.clean(self)
+
+    def remove_virtual(self):
+        for key, cell in list(self.layout.items()):
+            if isinstance(cell, VirtualCell):
+                self.layout.pop(key)
+        for cell in self.layout.values():
+            cell.clean(diagram=self)
 
     def create_room_only_layout(self):
         room_layout = OrderedDict()

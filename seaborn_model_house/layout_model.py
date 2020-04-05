@@ -22,6 +22,9 @@ def main(cli_args=sys.argv[1:]):
                     room.highlight(diagram)
         if not args.remove_names:
             diagram.add_names_to_grid()
+
+        if args.remove_virtual:
+            diagram.remove_virtual()
         diagram.add_layout_to_grid()
 
     if args.ruler:
@@ -34,7 +37,6 @@ def main(cli_args=sys.argv[1:]):
 
     if not args.wall_file:
         return
-
     wall_table = WallTable(wall_file=args.wall_file, clear=args.wall_clear)
     wall_table.update_wall_file(diagram, args.keep_missing_walls)
 
@@ -91,6 +93,8 @@ def parse_args(cli_args):
                              ' dimensions for debugging')
     parser.add_argument('--remove-objects', default=None, action='store_true',
                         help='remove objects and boundaries for debugging')
+    parser.add_argument('--remove-virtual', default=None, action='store_true',
+                        help='remove virtual walls for debugging')
     parser.add_argument('--remove-names', default=None, action='store_true',
                         help='remove names from rooms')
     parser.add_argument('--recreate-diagram', default=None,
@@ -106,8 +110,8 @@ def parse_args(cli_args):
 
     args = parser.parse_args(cli_args)
     if args.diagram_file is None and any(
-            [args.remove_names, args.remove_objects]):
-        print("--remove-names and --remove-objects should"
+            [args.remove_names, args.remove_objects, args.remove_virtual]):
+        print("--remove-names, --remove-objects, --remove-virtual should"
               " not be used without specifying a different diagram file")
         sys.exit(1)
     if args.input_file and args.diagram_file is None:
