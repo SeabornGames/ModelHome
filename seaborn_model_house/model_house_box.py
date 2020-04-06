@@ -6,6 +6,7 @@ class ModelHouseBox(Boxes):
     def __init__(self, output_file, *args):
         super().__init__()
         self.addSettingsArgs(edges.FingerJointSettings)
+        self.addSettingsArgs(edges.DuckbillSettings)
         self.parseArgs(args)
         self.output = output_file
         svgutil.SVGFile.METADATA = 'Created by RenderBox'

@@ -1832,6 +1832,103 @@ class DoveTailJointCounterPart(DoveTailJoint):
         return 0.0
 
 
+#############################################################################
+####     Duckbill Joints
+#############################################################################
+
+class DuckbillSettings(Settings):
+    """Settings for Duckbill Joints
+
+Values:
+
+* absolute
+
+  * angle : 50 : how much should fingers widen (-80 to 80)
+
+* relative (in multiples of thickness)
+
+  * size : 3 : from one middle of a dove tail to another
+  * depth : 1.5 : how far the dove tails stick out of/into the edge
+  * radius : 0.2 : radius used on all four corners
+  * length : 0.15 : length of the square within the dove tail
+  * width : 0.15 : width of the square within the dove tail
+"""
+    absolute_params = {
+        "angle": 50,
+    }
+
+    relative_params = {
+        "size": 3,
+        "depth": 1.5,
+        "radius": 0.2,
+        "length": 0.15,
+        "width": 0.15
+    }
+
+    def edgeObjects(self, boxes, chars="bD", add=True):
+        edges = [DuckbillJoint(boxes, self),
+                 DuckbillJointCounterPart(boxes, self)]
+        return self._edgeObjects(edges, boxes, chars, add)
+
+
+class DuckbillJoint(BaseEdge):
+    """Edge with dove tail joints with a hole and slit to join three or
+       four walls"""
+
+    char = 'b'
+    description = "Duckbill Joint"
+    positive = True
+
+    def __call__(self, length, **kw):
+        s = self.settings
+        radius = max(s.radius, self.boxes.burn)  # no smaller than burn
+        positive = self.positive
+        a = s.angle + 90
+        alpha = 0.5 * math.pi - math.pi * s.angle / 180.0
+
+        l1 = radius / math.tan(alpha / 2.0)
+        diffx = 0.5 * s.depth / math.tan(alpha)
+        l2 = 0.5 * s.depth / math.sin(alpha)
+
+        sections = int((length) // (s.size * 2))
+        leftover = length - sections * s.size * 2
+
+        p = 1 if positive else -1
+
+        self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
+
+        for i in range(sections):
+            self.corner(-1 * p * a, radius)
+            self.edge(2 * (l2 - l1))
+            self.corner(p * a, radius)
+            # todo put the code here
+            # finish code here and remove the next line
+            self.edge(2 * (diffx - l1) + s.size)
+            self.corner(p * a, radius)
+            self.edge(2 * (l2 - l1))
+            self.corner(-1 * p * a, radius)
+
+            if i < sections - 1:  # all but the last
+                self.edge(2 * (diffx - l1) + s.size)
+
+        self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
+
+    def margin(self):
+        """ """
+        return self.settings.depth
+
+
+class DuckbillJointCounterPart(DoveTailJoint):
+    """Edge for other side of duckbill joints """
+    char = 'B'
+    description = "Duckbill Joint (opposing side)"
+
+    positive = False
+
+    def margin(self):
+        return 0.0
+
+
 class FlexSettings(Settings):
     """Settings for Flex
 
