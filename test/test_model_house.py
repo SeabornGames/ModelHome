@@ -120,6 +120,14 @@ class BoxesTest(BaseTest):
         box.close()
         self.assert_result_file(self.expected_file(), self.result_file())
 
+    def test_duckbill_joint(self):
+        box = ModelHouseBox(self.result_file())
+        x = y = 100.0
+        box.rectangularWall(x, y, "EdEE", bedBolts=[None] * 4, move="right")
+        box.rectangularWall(x, y, "EEED", bedBolts=[None] * 4, move="right")
+        box.close()
+        self.assert_result_file(self.expected_file(), self.result_file())
+
 
 class LayoutModelTest(BaseTest):
     def test_create_empty_diagram_file(self):

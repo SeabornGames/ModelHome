@@ -27,13 +27,13 @@ def main(cli_args=sys.argv[1:]):
             box = ModelHouseBox(
                 os.path.join(args.output_folder, f'{room.lower()}.svg'))
         if diagram:
-            box.render_room_floor(diagram.get_room(room))
+            box.render_room_floor(diagram.get_room(room), args.scale)
 
         if wall_table is not None:
             for row in wall_table:
                 if (row['room_0'] == room or
                         (args.second_room_wall and row['room_1'] == room)):
-                    box.render_room_wall(row)
+                    box.render_room_wall(row, args.scale)
     box.close()
 
 

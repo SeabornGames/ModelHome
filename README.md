@@ -245,11 +245,24 @@ Rendering Notes
 ---------------
 
 --scale, the glowforge bed is 11x19.5", at the very least your longest wall
-should be less than 19", but you can put horzontal and veritcal breaks ╪ ╫
+should be less than 19", but you can put horizontal and vertical breaks ╪ ╫
 in a wall to break it up.
 
 Each character in the wall file will be equal to 1/4 of your --scale value.
 
+floor to floor edges will be dove tail joints (d, D)
+wall to floor edges will be Finger joint Holes (h, f)
+However we may need a joint that can do both f and h
+
+Doors will be done with flex cut
+
+Finger joints are a simple way of joining two sheets (e.g. of plywood). They
+work best at an 90° angle. There are two different sides matching each
+other. As a third alternative there are holes that the fingers of one
+sheet can plug into. This allows stable T connections especially
+useful for inner walls.
+
+https://www.festi.info/boxes.py/TrayLayout?language=en
 
 
 
