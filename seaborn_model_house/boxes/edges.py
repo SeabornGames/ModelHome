@@ -1865,7 +1865,7 @@ Values:
         "width": 0.15
     }
 
-    def edgeObjects(self, boxes, chars="bD", add=True):
+    def edgeObjects(self, boxes, chars="bB", add=True):
         edges = [DuckbillJoint(boxes, self),
                  DuckbillJointCounterPart(boxes, self)]
         return self._edgeObjects(edges, boxes, chars, add)

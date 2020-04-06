@@ -505,6 +505,10 @@ class Boxes:
         edges.DoveTailSettings(self.thickness, True,
                                **self.edgesettings.get("DoveTail",
                                                        {})).edgeObjects(self)
+        # Duckbill joints
+        edges.DuckbillSettings(self.thickness, True,
+                               **self.edgesettings.get("Duckbill",
+                                                       {})).edgeObjects(self)
         # Flex
         s = edges.FlexSettings(self.thickness, True,
                                **self.edgesettings.get("Flex", {}))
