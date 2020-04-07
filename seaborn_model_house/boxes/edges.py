@@ -1921,7 +1921,7 @@ class DuckbillJoint(BaseEdge):
             self.edge((diffx - l1) + s.size/2)
             # moving into dove tail
             self.corner(p*90, 0.0)  # todo do I have to have radius here?
-            self.edge(s.depth/8.0)
+            self.edge((s.depth-s.finger) / 2.0)
             # starting hole
             self.corner(p*90, 0.0)
             self.edge(s.finger/2.0) # top half
@@ -1935,7 +1935,7 @@ class DuckbillJoint(BaseEdge):
             self.edge(s.finger/2.0) # top half
             self.corner(p*90, 0.0)
             # done with hole
-            self.edge(s.depth/8.0)
+            self.edge((s.depth-s.finger) / 2.0)
             self.corner(p*90, 0.0)
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
