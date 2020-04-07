@@ -123,8 +123,11 @@ class BoxesTest(BaseTest):
     def test_duckbill_joint(self):
         box = ModelHouseBox(self.result_file())
         x = y = 100.0
-        box.rectangularWall(x, y, "EbEE", bedBolts=[None] * 4, move="right")
-        box.rectangularWall(x, y, "EEEB", bedBolts=[None] * 4, move="right")
+        box.rectangularWall(x, y, "EbEE", move="right")
+        box.rectangularWall(x, y, "EEEB", move="up")
+        box.rectangularWall(x, y, "EEEZ")
+        box.rectangularWall(x, y, "EzEE", move="left up")
+        box.rectangularWall(x, y, "EfEE", move="up")
         box.close()
         self.assert_result_file(self.expected_file(), self.result_file())
 
