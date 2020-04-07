@@ -1919,9 +1919,28 @@ class DuckbillJoint(BaseEdge):
             self.corner(-1 * p * a, radius)
             self.edge(2 * (l2 - l1))
             self.corner(p * a, radius)
-            # todo put the code here
+            self.edge((diffx - l1) + s.size/2)
+            # moving into dove tail
+            self.corner(p*90, 0.0)
+            self.edge(s.depth/3.0)
+            # starting hole
+            self.corner(p*90, 0.0)
+            self.edge(s.width/2.0) # top half
+            self.corner(p*-90, 0.0)
+            self.edge(s.width) # left side
+            self.corner(p*-90, 0.0)
+            self.edge(s.width) # bottom side
+            self.corner(p*-90, 0.0)
+            self.edge(s.width) # right side
+            self.corner(p*-90, 0.0)
+            self.edge(s.width/2.0) # top half
+            self.corner(p*90, 0.0)
+            # done with hole
+            self.edge(s.depth / 3.0)
+            self.corner(p*90, 0.0)
+            # done moving out of dove tail
+            self.edge((diffx - l1) + s.size/2)
             # finish code here and remove the next line
-            self.edge(2 * (diffx - l1) + s.size)
             self.corner(p * a, radius)
             self.edge(2 * (l2 - l1))
             self.corner(-1 * p * a, radius)
