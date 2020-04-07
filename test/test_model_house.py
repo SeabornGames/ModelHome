@@ -120,16 +120,23 @@ class BoxesTest(BaseTest):
         box.close()
         self.assert_result_file(self.expected_file(), self.result_file())
 
-    def test_duckbill_joint(self):
+    def _duckbill_joint(self, length):
         box = ModelHouseBox(self.result_file())
-        x = y = 100.0
+        x = y = length
         box.rectangularWall(x, y, "EbEE", move="right")
         box.rectangularWall(x, y, "EEEz", move="up")
         box.rectangularWall(x, y, "EEEB")
         box.rectangularWall(x, y, "EZEE", move="left up")
-        box.rectangularWall(x, y, "EfEE", move="up")
+        box.rectangularWall(x, y, "EfEE", move="right")
+        box.rectangularWall(x, y, "EEEB")
         box.close()
         self.assert_result_file(self.expected_file(), self.result_file())
+
+    def test_duckbill_joint_odd_fingers(self):
+        self._duckbill_joint(100)
+
+    def test_duckbill_joint_even_fingers(self):
+        self._duckbill_joint(110)
 
 
 class LayoutModelTest(BaseTest):

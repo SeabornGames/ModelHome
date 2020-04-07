@@ -1978,13 +1978,6 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
         s, f, thickness = self.settings.space, self.settings.finger, self.settings.thickness
 
         fingers, leftover = self.calcFingers(length, bedBolts)
-        if isinstance(self, DuckbillFingerEdgeCounterPart):
-            leftover += (1+fingers%2) * (s+f)
-            fingers = fingers // 2
-        else:
-            fingers = fingers // 2 + fingers % 2
-        s = s * 2 + self.settings.finger
-
         p = 1 if positive else -1
         if not positive:
             play = self.settings.play
@@ -1992,6 +1985,15 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
             s -= play
             leftover -= play
 
+        if isinstance(self, DuckbillFingerEdgeCounterPart):
+            if fingers%2:
+                leftover += 2*(s+f)
+            else:
+                self.edge(s+f, tabs=1)
+            fingers = fingers // 2
+        else:
+            fingers = fingers // 2 + fingers %2
+        s = s * 2 + self.settings.finger
         self.edge(leftover / 2.0, tabs=1)
 
         l1,l2 = self.fingerLength(self.settings.tight_angle)
