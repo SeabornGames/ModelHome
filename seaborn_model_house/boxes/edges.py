@@ -1836,7 +1836,6 @@ class DoveTailJointCounterPart(DoveTailJoint):
 #############################################################################
 ####     Duckbill Joints
 #############################################################################
-
 class DuckbillSettings(Settings):
     """Settings for Duckbill Joints
 
@@ -1862,7 +1861,7 @@ Values:
   * play : 0.0 : extra space to allow finger move in and out
 """
     absolute_params = {
-        "angle": 40,
+        "angle": 20,
         "tight_angle": 80,
         "surroundingspaces": 2.0,
         "style": ("rectangular", "springs"),
@@ -1870,7 +1869,7 @@ Values:
 
     relative_params = {
         "size": 4,
-        "depth": 2,
+        "depth": 3,
         "radius": 0.2,
         "length": 1.0,
         # parameters for the fingers
@@ -1921,22 +1920,22 @@ class DuckbillJoint(BaseEdge):
             self.corner(p * a, radius)
             self.edge((diffx - l1) + s.size/2)
             # moving into dove tail
-            self.corner(p*90, 0.0)
-            self.edge(s.depth/3.0)
+            self.corner(p*90, 0.0)  # todo do I have to have radius here?
+            self.edge(s.depth/8.0)
             # starting hole
             self.corner(p*90, 0.0)
-            self.edge(s.width/2.0) # top half
+            self.edge(s.finger/2.0) # top half
             self.corner(p*-90, 0.0)
-            self.edge(s.width) # left side
+            self.edge(s.finger) # left side
             self.corner(p*-90, 0.0)
-            self.edge(s.width) # bottom side
+            self.edge(s.finger) # bottom side
             self.corner(p*-90, 0.0)
-            self.edge(s.width) # right side
+            self.edge(s.finger) # right side
             self.corner(p*-90, 0.0)
-            self.edge(s.width/2.0) # top half
+            self.edge(s.finger/2.0) # top half
             self.corner(p*90, 0.0)
             # done with hole
-            self.edge(s.depth / 3.0)
+            self.edge(s.depth/8.0)
             self.corner(p*90, 0.0)
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
@@ -1980,8 +1979,8 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
 
         fingers, leftover = self.calcFingers(length, bedBolts)
         if isinstance(self, DuckbillFingerEdgeCounterPart):
+            leftover += (1+fingers%2) * (s+f)
             fingers = fingers // 2
-            leftover += 2*(self.settings.space + self.settings.finger)
         else:
             fingers = fingers // 2 + fingers % 2
         s = s * 2 + self.settings.finger
