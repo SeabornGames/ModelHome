@@ -1953,37 +1953,6 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
     description = "Duckbill Finger Joint"
     positive = True
 
-    def calcFingers(self, length, bedBolts):
-        space, finger = self.settings.space, self.settings.finger
-        fingers = int((length - (self.settings.surroundingspaces - 1) * space) //
-                      (space + finger))
-        if not finger:
-            fingers = 0
-        if bedBolts:
-            fingers = bedBolts.numFingers(fingers)
-        leftover = length - fingers * (space + finger) + space
-
-        if fingers <= 0:
-            fingers = 0
-            leftover = length
-
-        return fingers, leftover
-
-    def fingerLength(self, angle):
-        if angle >=90:
-            return self.settings.thickness, 0
-
-        if angle < 0:
-            return math.sin(math.radians(-angle)) * self.settings.thickness, 0
-
-        # 0 to 90
-        a = 90 - (180-angle) / 2.0
-        fingerlength = self.settings.thickness * math.tan(math.radians(a))
-        b = 90-2*a
-        spacerecess = -math.sin(math.radians(b)) * fingerlength
-        return fingerlength, spacerecess
-
-
     def __call__(self, length, bedBolts=None, bedBoltSettings=None, **kw):
 
         positive = self.positive
@@ -1993,12 +1962,10 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
         fingers, leftover = self.calcFingers(length, bedBolts)
         if isinstance(self, DuckbillFingerEdgeCounterPart):
             fingers = fingers // 2
-            # todo figure our why 3 and 2.1
-            s = s * 3
-            leftover *= 2.1
+            leftover += 2*(self.settings.space + self.settings.finger)
         else:
-            fingers = fingers // 2 + fingers%2
-            s = s * 3
+            fingers = fingers // 2 + fingers % 2
+        s = s * 2 + self.settings.finger
 
         p = 1 if positive else -1
         if not positive:
