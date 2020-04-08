@@ -1945,7 +1945,8 @@ class DuckbillJoint(BaseEdge):
             self.corner(-1 * p * a, radius)
 
             if i < sections - 1:  # all but the last
-                self.edge(2 * (diffx - l1) + s.size)
+                self.edge((diffx - l1) + s.size/2.0)
+                self.edge((diffx - l1) + s.size/2.0)
 
         self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
 
@@ -1987,14 +1988,16 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
 
         if isinstance(self, DuckbillFingerEdgeCounterPart):
             if fingers%2:
-                leftover += 2*(s+f)
-            else:
-                self.edge(s+f, tabs=1)
+                leftover += 2*s
+            leftover += 2*f
             fingers = fingers // 2
         else:
-            fingers = fingers // 2 + fingers %2
+            if not fingers%2:
+                leftover += 2*f
+            fingers = fingers // 2 + fingers % 2
+
         s = s * 2 + self.settings.finger
-        self.edge(leftover / 2.0, tabs=1)
+        self.edge(leftover / 2.0 , tabs=1)
 
         l1,l2 = self.fingerLength(self.settings.tight_angle)
         h = l1-l2
