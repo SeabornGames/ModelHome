@@ -122,7 +122,9 @@ class BoxesTest(BaseTest):
 
     def _duckbill_joint(self, length):
         box = ModelHouseBox(self.result_file())
+        box.thickness = 6.35
         x = y = length
+
         box.rectangularWall(x, y, "EbEE", move="right")
         box.rectangularWall(x, y, "EEEz", move="up")
         box.rectangularWall(x, y, "EEEB")

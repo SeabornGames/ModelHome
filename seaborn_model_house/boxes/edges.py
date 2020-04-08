@@ -1940,21 +1940,21 @@ class DuckbillJoint(BaseEdge):
     def draw_hole(self, s, p):
         # todo do I have to have radius here?
         self.corner(90, 0.0)
-        self.edge((s.depth - s.finger) / 2.0)
+        self.edge((s.depth - s.thickness) / 2.0)
         # starting hole
         self.corner(90, 0.0)
         self.edge(s.finger / 2.0)  # top half
         self.corner(-90, 0.0)
-        self.edge(s.finger)  # left side
+        self.edge(s.thickness)  # left side
         self.corner(-90, 0.0)
         self.edge(s.finger)  # bottom side
         self.corner(-90, 0.0)
-        self.edge(s.finger)  # right side
+        self.edge(s.thickness)  # right side
         self.corner(-90, 0.0)
         self.edge(s.finger / 2.0)  # top half
         self.corner(90, 0.0)
         # done with hole
-        self.edge((s.depth - s.finger) / 2.0)
+        self.edge((s.depth - s.thickness) / 2.0)
         self.corner(90, 0.0)
 
     def margin(self):
