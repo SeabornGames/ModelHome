@@ -1920,23 +1920,8 @@ class DuckbillJoint(BaseEdge):
             self.corner(p * a, radius)
             self.edge((diffx - l1) + s.size/2)
             # moving into dove tail
-            self.corner(p*90, 0.0)  # todo do I have to have radius here?
-            self.edge((s.depth-s.finger) / 2.0)
-            # starting hole
-            self.corner(p*90, 0.0)
-            self.edge(s.finger/2.0) # top half
-            self.corner(p*-90, 0.0)
-            self.edge(s.finger) # left side
-            self.corner(p*-90, 0.0)
-            self.edge(s.finger) # bottom side
-            self.corner(p*-90, 0.0)
-            self.edge(s.finger) # right side
-            self.corner(p*-90, 0.0)
-            self.edge(s.finger/2.0) # top half
-            self.corner(p*90, 0.0)
-            # done with hole
-            self.edge((s.depth-s.finger) / 2.0)
-            self.corner(p*90, 0.0)
+            if positive:
+                self.draw_hole(s, p)
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
             # finish code here and remove the next line
@@ -1946,16 +1931,38 @@ class DuckbillJoint(BaseEdge):
 
             if i < sections - 1:  # all but the last
                 self.edge((diffx - l1) + s.size/2.0)
+                if not positive:
+                    self.draw_hole(s, p)
                 self.edge((diffx - l1) + s.size/2.0)
 
         self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
+
+    def draw_hole(self, s, p):
+        # todo do I have to have radius here?
+        self.corner(90, 0.0)
+        self.edge((s.depth - s.finger) / 2.0)
+        # starting hole
+        self.corner(90, 0.0)
+        self.edge(s.finger / 2.0)  # top half
+        self.corner(-90, 0.0)
+        self.edge(s.finger)  # left side
+        self.corner(-90, 0.0)
+        self.edge(s.finger)  # bottom side
+        self.corner(-90, 0.0)
+        self.edge(s.finger)  # right side
+        self.corner(-90, 0.0)
+        self.edge(s.finger / 2.0)  # top half
+        self.corner(90, 0.0)
+        # done with hole
+        self.edge((s.depth - s.finger) / 2.0)
+        self.corner(90, 0.0)
 
     def margin(self):
         """ """
         return self.settings.depth
 
 
-class DuckbillJointCounterPart(DoveTailJoint):
+class DuckbillJointCounterPart(DuckbillJoint):
     """Edge for other side of duckbill joints """
     char = 'B'
     description = "Duckbill Joint (opposing side)"

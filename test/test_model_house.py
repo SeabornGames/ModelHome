@@ -133,10 +133,20 @@ class BoxesTest(BaseTest):
         self.assert_result_file(self.expected_file(), self.result_file())
 
     def test_duckbill_joint_odd_fingers(self):
+        # 4-4 3-3
         self._duckbill_joint(100)
 
     def test_duckbill_joint_even_fingers(self):
+        # 5-5 5-4 X
         self._duckbill_joint(110)
+
+    def test_duckbill_joint_scale1(self):
+        # 5-6 5-4 X
+        self._duckbill_joint(140)
+
+    def test_duckbill_joint_scale2(self):
+        # 7-7 6-6
+        self._duckbill_joint(170)
 
 
 class LayoutModelTest(BaseTest):
