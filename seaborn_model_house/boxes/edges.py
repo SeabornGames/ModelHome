@@ -1846,14 +1846,13 @@ Values:
   * angle : 50 : how much should fingers widen (-80 to 80)
   * tight_angle : angle of the finger the more the tighter (0, 3)
   * surroundingspaces : 2 : maximum space at the start and end in multiple of normal spaces
-  * style : "rectangular" : style of the fingers
 
 * relative (in multiples of thickness)
 
   * size : 3 : from one middle of a dove tail to another
   * depth : 1.5 : how far the dove tails stick out of/into the edge
   * radius : 0.2 : radius used on all four corners
-  * length : 0.15 : length of the square within the dove tail
+  * length : 1.0 : length of the square within the dove tail
   * space : 2.0 : space between fingers
   * finger : 2.0 : width of the fingers
   * width : 1.0 : width of finger holes
@@ -1864,7 +1863,6 @@ Values:
         "angle": 20,
         "tight_angle": 80,
         "surroundingspaces": 2.0,
-        "style": ("rectangular", "springs"),
     }
 
     relative_params = {
@@ -1888,7 +1886,51 @@ Values:
         return self._edgeObjects(edges, boxes, chars, add)
 
 
-class DuckbillJoint(BaseEdge):
+class DuckbillBase(BaseEdge):
+
+    def calc_section(self, length, even=True):
+        """ This calculates the fingers / sections and leftover/ distance
+            before and after fingers. It returns the number of fingers
+            and the distance before and after the fingers"""
+        fingers = int((length) // self.settings.size * 2)
+        leftover = length - fingers  * self.settings.size * 2
+        return fingers, leftover
+
+
+
+    def calc_fingers(self, length):
+        # space, finger = self.settings.space, self.settings.finger
+        # fingers = int((length - (self.settings.surroundingspaces - 1) * space) //
+        #               (space + finger))
+        # if not finger:
+        #     fingers = 0
+        # leftover = length - fingers * (space + finger) + space
+        #
+        # if fingers <= 0:
+        #     fingers = 0
+        #     leftover = length
+        #
+        # return fingers, leftover
+        fingers = int((length) // self.settings.size * 2)
+        leftover = length - fingers  * self.settings.size * 2
+        return fingers, leftover
+
+    def fingerLength(self, angle):
+        if angle >=90:
+            return self.settings.thickness, 0
+
+        if angle < 0:
+            return math.sin(math.radians(-angle)) * self.settings.thickness, 0
+
+        # 0 to 90
+        a = 90 - (180-angle) / 2.0
+        fingerlength = self.settings.thickness * math.tan(math.radians(a))
+        b = 90-2*a
+        spacerecess = -math.sin(math.radians(b)) * fingerlength
+        return fingerlength, spacerecess
+
+
+class DuckbillJoint(BaseEdge, DuckbillBase):
     """Edge with dove tail joints with a hole and slit to join three or
        four walls"""
 
@@ -1899,7 +1941,6 @@ class DuckbillJoint(BaseEdge):
     def __call__(self, length, **kw):
         s = self.settings
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
-        positive = self.positive
         a = s.angle + 90
         alpha = 0.5 * math.pi - math.pi * s.angle / 180.0
 
@@ -1907,21 +1948,20 @@ class DuckbillJoint(BaseEdge):
         diffx = 0.5 * s.depth / math.tan(alpha)
         l2 = 0.5 * s.depth / math.sin(alpha)
 
-        sections = int((length) // (s.size * 2))
-        leftover = length - sections * s.size * 2
+        fingers, leftover = self.calc_fingers(length)
 
-        p = 1 if positive else -1
+        p = 1 if self.positive else -1
 
         self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
 
-        for i in range(sections):
+        for i in range(fingers):
             self.corner(-1 * p * a, radius)
             self.edge(2 * (l2 - l1))
             self.corner(p * a, radius)
             self.edge((diffx - l1) + s.size/2)
             # moving into dove tail
-            if positive:
-                self.draw_hole(s, p)
+            if self.positive:
+                self.draw_hole(s, p, radius=0.0) # todo radius ?
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
             # finish code here and remove the next line
@@ -1929,33 +1969,32 @@ class DuckbillJoint(BaseEdge):
             self.edge(2 * (l2 - l1))
             self.corner(-1 * p * a, radius)
 
-            if i < sections - 1:  # all but the last
+            if i < fingers - 1:  # all but the last
                 self.edge((diffx - l1) + s.size/2.0)
-                if not positive:
-                    self.draw_hole(s, p)
+                if not self.positive:
+                    self.draw_hole(s, p, radius=0.0)
                 self.edge((diffx - l1) + s.size/2.0)
 
         self.edge((s.size + leftover) / 2.0 + diffx - l1, tabs=1)
 
-    def draw_hole(self, s, p):
-        # todo do I have to have radius here?
-        self.corner(90, 0.0)
+    def draw_hole(self, s, p, radius=0.0):
+        self.corner(90, radius)
         self.edge((s.depth - s.thickness) / 2.0)
         # starting hole
-        self.corner(90, 0.0)
+        self.corner(90, radius)
         self.edge(s.finger / 2.0)  # top half
-        self.corner(-90, 0.0)
+        self.corner(-90, radius)
         self.edge(s.thickness)  # left side
-        self.corner(-90, 0.0)
+        self.corner(-90, radius)
         self.edge(s.finger)  # bottom side
-        self.corner(-90, 0.0)
+        self.corner(-90, radius)
         self.edge(s.thickness)  # right side
-        self.corner(-90, 0.0)
+        self.corner(-90, radius)
         self.edge(s.finger / 2.0)  # top half
-        self.corner(90, 0.0)
+        self.corner(90, radius)
         # done with hole
         self.edge((s.depth - s.thickness) / 2.0)
-        self.corner(90, 0.0)
+        self.corner(90, radius)
 
     def margin(self):
         """ """
@@ -1973,7 +2012,11 @@ class DuckbillJointCounterPart(DuckbillJoint):
         return 0.0
 
 
-class DuckbillFingerEdge(BaseEdge, FingerJointBase):
+class DuckbillDoubleFingerEdge(BaseEdge, DuckbillBase):
+    """ Finger joint with all """
+
+
+class DuckbillFingerEdge(BaseEdge, DuckbillBase):
     """Finger joint edge """
     char = 'z'
     description = "Duckbill Finger Joint"
@@ -1994,14 +2037,7 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
             leftover -= play
 
         if isinstance(self, DuckbillFingerEdgeCounterPart):
-            if fingers%2:
-                leftover += 2*s
-            leftover += 2*f
-            fingers = fingers // 2
-        else:
-            if not fingers%2:
-                leftover += 2*f
-            fingers = fingers // 2 + fingers % 2
+            leftover += self.settings.finger
 
         s = s * 2 + self.settings.finger
         self.edge(leftover / 2.0 , tabs=1)
@@ -2022,15 +2058,7 @@ class DuckbillFingerEdge(BaseEdge, FingerJointBase):
                 else:
                     self.edge(s)
 
-            if positive and self.settings.style == "springs":
-                self.polyline(
-                    0, -90 * p, 0.8*h, (90 * p, 0.2*h),
-                    0.1 * h, 90, 0.9*h, -180, 0.9*h, 90,
-                    f - 0.6*h,
-                    90, 0.9*h, -180, 0.9*h, 90, 0.1*h,
-                (90 * p, 0.2 *h), 0.8*h, -90 * p)
-            else:
-                self.polyline(0, -90 * p, h, 90 * p, f, 90 * p, h, -90 * p)
+            self.polyline(0, -90 * p, h, 90 * p, f, 90 * p, h, -90 * p)
 
         self.edge(leftover / 2.0, tabs=1)
 
