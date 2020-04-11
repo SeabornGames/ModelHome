@@ -442,9 +442,9 @@ class Boxes:
         """
         if args is None:
             args = sys.argv[1:]
-        if len(args) > 1 and args[-1][0] != "-":
-            self.inkscapefile = args[-1]
-            del args[-1]
+        # if len(args) > 1 and args[-1][0] != "-":
+        #     self.inkscapefile = args[-1]
+        #     del args[-1]
         args = [a for a in args if not a.startswith('--tab=')]
         self.metadata[
             "cli"] = "boxes " + self.__class__.__name__ + " " + " ".join(

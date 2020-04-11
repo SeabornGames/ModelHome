@@ -121,9 +121,9 @@ class BoxesTest(BaseTest):
         self.assert_result_file(self.expected_file(), self.result_file())
 
     def _duckbill_joint(self, length):
-        box = ModelHouseBox(self.result_file())
-        box.thickness = 6.35
-        x = y = length
+        box = ModelHouseBox(self.result_file(), '--thickness', '3.175')
+        y = length
+        x = 50
 
         box.rectangularWall(x, y, "EbEE", move="right")
         box.rectangularWall(x, y, "EEEz", move="up")
@@ -140,11 +140,11 @@ class BoxesTest(BaseTest):
 
     def test_duckbill_joint_even_fingers(self):
         # 5-5 5-4 X
-        self._duckbill_joint(110)
+        self._duckbill_joint(140)
 
     def test_duckbill_joint_scale1(self):
         # 5-6 5-4 X
-        self._duckbill_joint(140)
+        self._duckbill_joint(180)
 
     def test_duckbill_joint_scale2(self):
         # 7-7 6-6
