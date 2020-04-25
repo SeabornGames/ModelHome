@@ -169,9 +169,9 @@ class BoxesTest(BaseTest):
         box.rectangularWall(100, y, "EEEE", move="up")
         box.rectangularWall(100, y, "bEBE", move="up")
         box.rectangularWall(100, y, "bEBE", move="right")
-        box.rectangularWall(110, y, "bEBE", move="")
-        box.rectangularWall(110, y, "bEBE", move="down")
-        box.rectangularWall(110, y, "EEEE", move="down")
+        # box.rectangularWall(110, y, "bEBE", move="")
+        # box.rectangularWall(110, y, "bEBE", move="down")
+        # box.rectangularWall(110, y, "EEEE", move="down")
         box.close()
         # self.assert_result_file(self.expected_file(), self.result_file())
 

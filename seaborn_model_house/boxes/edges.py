@@ -1899,7 +1899,7 @@ class DuckbillBase(BaseEdge):
         offset1 = offset2 + self.settings.size
 
         total = offset1 + offset2 + 2 * half_fingers * self.settings.size # todo remove
-        print(f"\n\n\nsize: {self.settings.size} positive: {self.positive} offset1: {offset1:5.2f} offset2: {offset2:5.2f} fingers: {fingers} half_fingers: {half_fingers} total: {total:5.2f}") # todo remove
+        print(f"size: {self.settings.size} positive: {self.positive} offset1: {offset1:5.2f} offset2: {offset2:5.2f} fingers: {fingers} half_fingers: {half_fingers} total: {total:5.2f}") # todo remove
         return half_fingers, offset1, offset2
 
     def fingerLength(self, angle):
@@ -1939,6 +1939,8 @@ class DuckbillJoint1(DuckbillBase):
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
         angle = s.angle if self.positive else 0 # todo remove else 0
+        # 2pi radians in a circle
+        # angle / 180 * pi = radian
         radians = angle / 180.0 * math.pi
         # tan = opposite / adjacent == x_back / depth
         diffx = math.tan(radians) * s.depth
@@ -1947,7 +1949,7 @@ class DuckbillJoint1(DuckbillBase):
 
         # unknown how this is calculated
         radius_diff = radius / math.tan(0.5 * math.pi - radians / 2.0)
-        print(f"angle: {angle:2} radius: {radius} radius_diff: {radius_diff:5.3f} hypotenuse: {hypotenuse:5.3f}")
+        print(f"\n\n\nangle: {angle:2} radius: {radius} radius_diff: {radius_diff:5.3f} hypotenuse: {hypotenuse:5.3f}  diffx: {diffx:5.3f} depth: {s.depth}")
         angle += 90
 
         fingers, offset1, offset2 = self.calc_section(length, self.positive)
@@ -1975,7 +1977,7 @@ class DuckbillJoint1(DuckbillBase):
         for i in range(fingers):
             self.corner(-1 * p * angle, radius)
             self.edge(hypotenuse - 2 * radius_diff)
-            log_delta('moving back from duckbill angle', radius_diff)
+            log_delta('moving up and back from duckbill angle', -1 * diffx)
             self.corner(p * angle, radius)
             self.edge((diffx - radius_diff) + s.size/2)
             log_delta('moving into dove tail', (diffx -radius_diff) + s.size/2)
@@ -1987,15 +1989,17 @@ class DuckbillJoint1(DuckbillBase):
             log_delta('moving out of dove tail', (diffx -radius_diff) + s.size/2)
             self.corner(p * angle, radius)
             self.edge(hypotenuse - 2 * radius_diff)
-            log_delta('moving back out of duckbill angle', radius_diff)
+            log_delta('moving down and back from duckbill angle\n', -1* diffx)
             self.corner(-1 * p * angle, radius)
 
-            self.edge(s.size/2.0+(diffx - radius_diff)/2)
-            log_delta('finishing duckbill', s.size/2.0 + (diffx - radius_diff)/2)
+            # self.edge(s.size/2.0)
+            # log_delta('finishing duckbill', s.size/2.0)
+            self.edge(s.size/2.0)
+            log_delta('move to hole', s.size / 2.0)
             if not self.positive:
                 self.draw_hole(s, 1)
-            self.edge(s.size/2.0+(diffx - radius_diff)/2)
-            log_delta('dont know', s.size/2.0 + (diffx - radius_diff)/2)
+            self.edge(s.size/2.0)
+            log_delta('move out of hole', s.size / 2.0)
         self.draw_guideline_marker(2)
         self.edge(offset2)
         log_delta('moving to offset', offset2)
