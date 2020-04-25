@@ -1860,7 +1860,7 @@ Values:
   * play : 0.0 : extra space to allow finger move in and out
 """
     absolute_params = {
-        "angle": 0, # todo 20,
+        "angle": 10, # todo should be 20
         "tight_angle": 80,
         "surroundingspaces": 2.0,
     }
@@ -1938,12 +1938,21 @@ class DuckbillJoint1(DuckbillBase):
         s = self.settings
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
-        a = s.angle + 90
-        alpha = 0.5 * math.pi - math.pi * s.angle / 180.0
+        angle = s.angle if self.positive else 0 # todo remove else 0
+        radians = angle / 360.0 * math.pi
+        # tan = opposite / adjacent == x_back / depth
+        diffx = math.tan(radians) * s.depth
+        # cos = adjacent / hypotenuse == depth / edge
+        hypotenuse = s.depth / math.cos(radians)
 
-        l1 = radius / math.tan(alpha / 2.0)
-        diffx = 0.5 * s.depth / math.tan(alpha)
-        l2 = 0.5 * s.depth / math.sin(alpha)
+        # unknown how this is calculated
+        radius_diff = radius / math.tan((0.5 * math.pi - radians) / 2.0)
+
+        l2 = hypotenuse / 2.0
+        l1 = radius_diff / 2.0
+        print(f"angle: {s.angle:2} radius: {radius} l1: {l1:5.3f} l2: {l2:5.3f}")
+        angle += 90
+
         fingers, offset1, offset2 = self.calc_section(length, self.positive)
         p = 1 if self.positive else -1
 
@@ -1967,10 +1976,10 @@ class DuckbillJoint1(DuckbillBase):
         log_delta('moving out of half of first hole', s.size/2)
 
         for i in range(fingers):
-            self.corner(-1 * p * a, radius)
+            self.corner(-1 * p * angle, radius)
             self.edge(2 * (l2 - l1))
             log_delta('moving back from duckbill angle', l1)
-            self.corner(p * a, radius)
+            self.corner(p * angle, radius)
             self.edge((diffx - l1) + s.size/2)
             log_delta('moving into dove tail', (diffx -l1) + s.size/2)
             # moving into dove tail
@@ -1979,10 +1988,10 @@ class DuckbillJoint1(DuckbillBase):
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
             log_delta('moving out of dove tail', (diffx -l1) + s.size/2)
-            self.corner(p * a, radius)
+            self.corner(p * angle, radius)
             self.edge(2 * (l2 - l1))
             log_delta('moving back out of duckbill angle', l1)
-            self.corner(-1 * p * a, radius)
+            self.corner(-1 * p * angle, radius)
 
             self.edge(s.size/2.0+(diffx - l1)/2)
             log_delta('finishing duckbill', s.size/2.0 + (diffx - l1)/2)
