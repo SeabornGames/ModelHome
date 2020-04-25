@@ -1939,7 +1939,7 @@ class DuckbillJoint1(DuckbillBase):
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
         angle = s.angle
-        # angle = s.angle if self.positive else 0 # todo remove else 0
+        # angle = s.angle if self.positive else 0 # todo remove
 
         # 2pi radians in a circle so angle / 180 * pi = radian
         radians = angle / 180.0 * math.pi
