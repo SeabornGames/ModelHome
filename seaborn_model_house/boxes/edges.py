@@ -1917,7 +1917,6 @@ class DuckbillBase(BaseEdge):
         return fingerlength, spacerecess
 
     def draw_guideline_marker(self, size=1, radius=0.0):
-        return
         size *= self.settings.depth/2.0
         self.corner(-90, radius)
         self.edge(size)
@@ -1965,13 +1964,13 @@ class DuckbillJoint1(DuckbillBase):
             if length_of_guideline_marker:
                 self.draw_guideline_marker(length_of_guideline_marker)
 
+        self.edge(s.size / 2)
         self.corner(p*90, radius)
-
         self.edge(s.depth/2)
         self.corner(p*-90, radius)
 
-        self.edge(offset1 - s.size / 2 + diffx, tabs=1)
-        log_delta('moving into half to first hole', offset1 - s.size / 2 + diffx, 2)
+        self.edge(offset1 - s.size + diffx, tabs=1)
+        log_delta('moving into half to first hole', offset1 - s.size / 2 + diffx)
 
         if not self.positive:
             self.draw_hole(s, 1)
@@ -1994,22 +1993,21 @@ class DuckbillJoint1(DuckbillBase):
             self.corner(p * angle, radius)
             self.edge(hypotenuse - 2 * radius_diff)
             self.corner(-1 * p * angle, radius)
-            log_delta('moving down and back from duckbill angle\n', -1* diffx, 3)
+            log_delta('moving down and back from duckbill angle\n', -1* diffx)
 
-            # self.edge(s.size/2.0)
-            # log_delta('finishing duckbill', s.size/2.0)
             self.edge((diffx - radius_diff) + s.size/2.0)
-            log_delta('move to hole', (diffx - radius_diff) + s.size / 2.0, 4)
+            log_delta('move to hole', (diffx - radius_diff) + s.size / 2.0)
             if not self.positive:
                 self.draw_hole(s, 1)
-            self.edge((diffx - radius_diff) + s.size/2.0)
-            log_delta('move out of hole', (diffx - radius_diff) + s.size / 2.0)
-        self.draw_guideline_marker(2)
-        self.edge(offset2 - diffx)
-        log_delta('moving to offset', offset2 - diffx)
+            if i != fingers - 1:
+                self.edge((diffx - radius_diff) + s.size/2.0)
+                log_delta('move out of hole', (diffx - radius_diff) + s.size / 2.0)
+        self.edge(offset2)
+        log_delta('moving to offset', offset2)
         self.corner(p*-90, radius)
         self.edge(s.depth/2)
         self.corner(p*90, radius)
+        self.edge(s.size / 2)
 
     def draw_hole(self, s, p, radius=0.0):
         self.corner(p*90, radius)

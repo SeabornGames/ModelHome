@@ -126,30 +126,27 @@ class BoxesTest(BaseTest):
         x = box.adjustSize(100)
 
         # edges = [bottom, right, top, left]
+        # draw square box for each box to compare sizes
+        box.rectangularWall(x, y, "EEEE", move="right")
+        box.rectangularWall(x, y, "EEEE", move="right")
+        box.rectangularWall(x, y, "EEEE", move="right")
+        box.rectangularWall(x, y, "EEEE", move="up")
 
-        def draw_comparison_boxes(y=10.0):
-            # draw square box for each box to compare sizes
-            box.rectangularWall(x, y, "EEEE", move="right")
-            box.rectangularWall(x, y, "EEEE", move="right")
-            box.rectangularWall(x, y, "EEEE", move="right")
-            box.rectangularWall(x, y, "EEEE", move="up")
-
-        draw_comparison_boxes()
         box.rectangularWall(x, y, "EEZZ")
         box.rectangularWall(x, y, "EBBB", move="left")
-        # box.rectangularWall(x, y, "Ebbb", move="left")
-        # box.rectangularWall(x, y, "EzEE", move="left up")
-        #
-        # box.rectangularWall(x, y, "ZhEE", move="right")
-        # box.rectangularWall(x, y, "BzEQ", move="right")
-        # box.rectangularWall(x, y, "bEEZ", move="right")
-        # box.rectangularWall(x, y, "ZEEh", move="up")
+        box.rectangularWall(x, y, "Ebbb", move="left")
+        box.rectangularWall(x, y, "EzEE", move="left up")
+
+        box.rectangularWall(x, y, "ZhEE", move="right")
+        box.rectangularWall(x, y, "BzEQ", move="right")
+        box.rectangularWall(x, y, "bEEZ", move="right")
+        box.rectangularWall(x, y, "ZEEh", move="up")
         box.close()
-        # self.assert_result_file(self.expected_file(), self.result_file())
+        self.assert_result_file(self.expected_file(), self.result_file())
 
     def test_duckbill_fingers(self):
         box = ModelHouseBox(self.result_file(), '--thickness', '3.175')
-        y = 100
+        y = 100.0
         # edges = [bottom, right, top, left]
 
         box.rectangularWall(100, y, "EEEE", move="up")
@@ -163,7 +160,7 @@ class BoxesTest(BaseTest):
 
     def test_duckbill_joints(self):
         box = ModelHouseBox(self.result_file(), '--thickness', '3.175')
-        y = 100
+        y = 100.0
         # edges = [bottom, right, top, left]
 
         box.rectangularWall(100, y, "EEEE", move="up")
@@ -171,6 +168,20 @@ class BoxesTest(BaseTest):
         box.rectangularWall(100, y, "bEBE", move="right")
         box.rectangularWall(110, y, "BEbE", move="")
         box.rectangularWall(110, y, "BEbE", move="down")
+        box.rectangularWall(110, y, "EEEE", move="down")
+        box.close()
+        # self.assert_result_file(self.expected_file(), self.result_file())
+
+    def test_four_duckbill_joints(self):
+        box = ModelHouseBox(self.result_file(), '--thickness', '3.175')
+        y = 100.0
+        # edges = [bottom, right, top, left]
+
+        box.rectangularWall(100, y, "EEEE", move="up")
+        box.rectangularWall(100, y, "bbBB", move="up")
+        box.rectangularWall(100, y, "BBbb", move="right")
+        box.rectangularWall(110, y, "BBbb", move="")
+        box.rectangularWall(110, y, "bbBB", move="down")
         box.rectangularWall(110, y, "EEEE", move="down")
         box.close()
         self.assert_result_file(self.expected_file(), self.result_file())
