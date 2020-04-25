@@ -1860,7 +1860,7 @@ Values:
   * play : 0.0 : extra space to allow finger move in and out
 """
     absolute_params = {
-        "angle": 10, # todo should be 20
+        "angle": 20,
         "tight_angle": 80,
         "surroundingspaces": 2.0,
     }
@@ -1939,18 +1939,15 @@ class DuckbillJoint1(DuckbillBase):
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
         angle = s.angle if self.positive else 0 # todo remove else 0
-        radians = angle / 360.0 * math.pi
+        radians = angle / 180.0 * math.pi
         # tan = opposite / adjacent == x_back / depth
         diffx = math.tan(radians) * s.depth
         # cos = adjacent / hypotenuse == depth / edge
         hypotenuse = s.depth / math.cos(radians)
 
         # unknown how this is calculated
-        radius_diff = radius / math.tan((0.5 * math.pi - radians) / 2.0)
-
-        l2 = hypotenuse / 2.0
-        l1 = radius_diff / 2.0
-        print(f"angle: {s.angle:2} radius: {radius} l1: {l1:5.3f} l2: {l2:5.3f}")
+        radius_diff = radius / math.tan(0.5 * math.pi - radians / 2.0)
+        print(f"angle: {angle:2} radius: {radius} radius_diff: {radius_diff:5.3f} hypotenuse: {hypotenuse:5.3f}")
         angle += 90
 
         fingers, offset1, offset2 = self.calc_section(length, self.positive)
@@ -1977,28 +1974,28 @@ class DuckbillJoint1(DuckbillBase):
 
         for i in range(fingers):
             self.corner(-1 * p * angle, radius)
-            self.edge(2 * (l2 - l1))
-            log_delta('moving back from duckbill angle', l1)
+            self.edge(hypotenuse - 2 * radius_diff)
+            log_delta('moving back from duckbill angle', radius_diff)
             self.corner(p * angle, radius)
-            self.edge((diffx - l1) + s.size/2)
-            log_delta('moving into dove tail', (diffx -l1) + s.size/2)
+            self.edge((diffx - radius_diff) + s.size/2)
+            log_delta('moving into dove tail', (diffx -radius_diff) + s.size/2)
             # moving into dove tail
             if self.positive:
                 self.draw_hole(s, 1, radius=0.0) # todo radius ?
             # done moving out of dove tail
-            self.edge((diffx - l1) + s.size/2)
-            log_delta('moving out of dove tail', (diffx -l1) + s.size/2)
+            self.edge((diffx - radius_diff) + s.size/2)
+            log_delta('moving out of dove tail', (diffx -radius_diff) + s.size/2)
             self.corner(p * angle, radius)
-            self.edge(2 * (l2 - l1))
-            log_delta('moving back out of duckbill angle', l1)
+            self.edge(hypotenuse - 2 * radius_diff)
+            log_delta('moving back out of duckbill angle', radius_diff)
             self.corner(-1 * p * angle, radius)
 
-            self.edge(s.size/2.0+(diffx - l1)/2)
-            log_delta('finishing duckbill', s.size/2.0 + (diffx - l1)/2)
+            self.edge(s.size/2.0+(diffx - radius_diff)/2)
+            log_delta('finishing duckbill', s.size/2.0 + (diffx - radius_diff)/2)
             if not self.positive:
                 self.draw_hole(s, 1)
-            self.edge(s.size/2.0+(diffx - l1)/2)
-            log_delta('dont know', s.size/2.0 + (diffx - l1)/2)
+            self.edge(s.size/2.0+(diffx - radius_diff)/2)
+            log_delta('dont know', s.size/2.0 + (diffx - radius_diff)/2)
         self.draw_guideline_marker(2)
         self.edge(offset2)
         log_delta('moving to offset', offset2)
