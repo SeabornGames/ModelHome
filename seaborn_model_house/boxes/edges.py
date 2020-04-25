@@ -1860,7 +1860,7 @@ Values:
   * play : 0.0 : extra space to allow finger move in and out
 """
     absolute_params = {
-        "angle": 20, # todo 20
+        "angle": 0, # todo 20,
         "tight_angle": 80,
         "surroundingspaces": 2.0,
     }
@@ -1893,20 +1893,13 @@ class DuckbillBase(BaseEdge):
         """ This calculates the fingers / sections and leftover/ distance
             before and after fingers. It returns the number of fingers
             and the distance before and after the fingers"""
-        fingers = int((length) // (self.settings.size))
+        fingers = int((length - self.settings.size) // (self.settings.size))
         half_fingers = fingers // 2
-        offset2 = (length - (fingers * self.settings.size)) / 2
+        offset2 = (length - (half_fingers * 2 * self.settings.size)) / 2 - self.settings.size / 2
         offset1 = offset2 + self.settings.size
 
-        if not fingers % 2: # if even
-            # offset1 += self.settings.size / 2
-            if positive:
-                offset1 = offset2
-            else:
-                offset2 = offset1
-            if not positive:
-                half_fingers -= 1
-        print(f"positive: {self.positive} offset1: {offset1} offset2: {offset2} half_fingers: {half_fingers}")
+        total = offset1 + offset2 + 2 * half_fingers * self.settings.size # todo remove
+        print(f"\n\n\nsize: {self.settings.size} positive: {self.positive} offset1: {offset1:5.2f} offset2: {offset2:5.2f} fingers: {fingers} half_fingers: {half_fingers} total: {total:5.2f}") # todo remove
         return half_fingers, offset1, offset2
 
     def fingerLength(self, angle):
@@ -1923,7 +1916,7 @@ class DuckbillBase(BaseEdge):
         spacerecess = -math.sin(math.radians(b)) * fingerlength
         return fingerlength, spacerecess
 
-    def draw_line(self, size=1, radius=0.0):
+    def draw_guideline_marker(self, size=1, radius=0.0):
         return
         size *= self.settings.depth/2.0
         self.corner(-90, radius)
@@ -1954,35 +1947,52 @@ class DuckbillJoint1(DuckbillBase):
         fingers, offset1, offset2 = self.calc_section(length, self.positive)
         p = 1 if self.positive else -1
 
-        self.draw_line(1)
+        self.remainder = length # todo remove
+        def log_delta(reason, delta=0, length_of_guideline_marker=0): # todo remove
+            self.remainder -= delta
+            print(f"delta:  {delta:5.2f}   length:  {length:5.2f}   remainder:  {self.remainder:5.2f}   reason: {reason}")
+            if length_of_guideline_marker:
+                self.draw_guideline_marker(length_of_guideline_marker)
+
         self.corner(p*90, radius)
+
         self.edge(s.depth/2)
         self.corner(p*-90, radius)
-        self.edge(offset1 if self.positive or True else offset2, tabs=1)
-        self.draw_line(2)
+
+        self.edge(offset1 - s.size / 2, tabs=1)
+        log_delta('moving into half to first hole', offset1 - s.size / 2)
+        if not self.positive:
+            self.draw_hole(s, 1)
+        self.edge(s.size/2)
+        log_delta('moving out of half of first hole', s.size/2)
 
         for i in range(fingers):
             self.corner(-1 * p * a, radius)
             self.edge(2 * (l2 - l1))
+            log_delta('moving back from duckbill angle', l1)
             self.corner(p * a, radius)
             self.edge((diffx - l1) + s.size/2)
+            log_delta('moving into dove tail', (diffx -l1) + s.size/2)
             # moving into dove tail
             if self.positive:
                 self.draw_hole(s, 1, radius=0.0) # todo radius ?
             # done moving out of dove tail
             self.edge((diffx - l1) + s.size/2)
-            # finish code here and remove the next line
+            log_delta('moving out of dove tail', (diffx -l1) + s.size/2)
             self.corner(p * a, radius)
             self.edge(2 * (l2 - l1))
+            log_delta('moving back out of duckbill angle', l1)
             self.corner(-1 * p * a, radius)
 
-            # if i < fingers - 1:  # all but the last
             self.edge(s.size/2.0+(diffx - l1)/2)
+            log_delta('finishing duckbill', s.size/2.0 + (diffx - l1)/2)
             if not self.positive:
                 self.draw_hole(s, 1)
             self.edge(s.size/2.0+(diffx - l1)/2)
-        self.draw_line(2)
-        self.edge(offset2 if self.positive or True else offset1)
+            log_delta('dont know', s.size/2.0 + (diffx - l1)/2)
+        self.draw_guideline_marker(2)
+        self.edge(offset2)
+        log_delta('moving to offset', offset2)
         self.corner(p*-90, radius)
         self.edge(s.depth/2)
         self.corner(p*90, radius)
@@ -2088,9 +2098,9 @@ class DuckbillFinger1(DuckbillBase):
             offset1 -= play
             offset2 -= play
 
-        self.draw_line(1)
+        self.draw_guideline_marker(1)
         self.edge(offset1, tabs=1)
-        self.draw_line(2)
+        self.draw_guideline_marker(2)
         l1,l2 = self.fingerLength(s.tight_angle)
         h = l1-l2
         for i in range(fingers):
@@ -2098,9 +2108,9 @@ class DuckbillFinger1(DuckbillBase):
             self.polyline(0, -90, h, 90, finger, 90, h, -90)
             self.edge(size/2 + (size-finger)/2)
 
-        self.draw_line(2)
+        self.draw_guideline_marker(2)
         self.edge(offset2, tabs=1)
-        self.draw_line(1)
+        self.draw_guideline_marker(1)
 
     def margin(self):
         """Space needed right of the starting point"""
