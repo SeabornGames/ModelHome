@@ -1860,7 +1860,7 @@ Values:
   * play : 0.0 : extra space to allow finger move in and out
 """
     absolute_params = {
-        "angle": 20,
+        "angle": 15,
         "tight_angle": 80,
         "surroundingspaces": 2.0,
     }
@@ -1939,7 +1939,7 @@ class DuckbillJoint1(DuckbillBase):
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
         angle = s.angle
-        angle = s.angle if self.positive else 0 # todo remove else 0
+        # angle = s.angle if self.positive else 0 # todo remove else 0
 
         # 2pi radians in a circle so angle / 180 * pi = radian
         radians = angle / 180.0 * math.pi
@@ -1970,8 +1970,8 @@ class DuckbillJoint1(DuckbillBase):
         self.edge(s.depth/2)
         self.corner(p*-90, radius)
 
-        self.edge(offset1 - s.size / 2, tabs=1)
-        log_delta('moving into half to first hole', offset1 - s.size / 2, 2)
+        self.edge(offset1 - s.size / 2 + diffx, tabs=1)
+        log_delta('moving into half to first hole', offset1 - s.size / 2 + diffx, 2)
 
         if not self.positive:
             self.draw_hole(s, 1)
@@ -2005,8 +2005,8 @@ class DuckbillJoint1(DuckbillBase):
             self.edge((diffx - radius_diff) + s.size/2.0)
             log_delta('move out of hole', (diffx - radius_diff) + s.size / 2.0)
         self.draw_guideline_marker(2)
-        self.edge(offset2)
-        log_delta('moving to offset', offset2)
+        self.edge(offset2 - diffx)
+        log_delta('moving to offset', offset2 - diffx)
         self.corner(p*-90, radius)
         self.edge(s.depth/2)
         self.corner(p*90, radius)
