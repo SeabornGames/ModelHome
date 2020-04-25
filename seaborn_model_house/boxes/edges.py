@@ -1938,12 +1938,15 @@ class DuckbillJoint1(DuckbillBase):
         s = self.settings
         radius = max(s.radius, self.boxes.burn)  # no smaller than burn
         radius = 0.0 # todo remove
+        angle = s.angle
         angle = s.angle if self.positive else 0 # todo remove else 0
-        # 2pi radians in a circle
-        # angle / 180 * pi = radian
+
+        # 2pi radians in a circle so angle / 180 * pi = radian
         radians = angle / 180.0 * math.pi
         # tan = opposite / adjacent == x_back / depth
         diffx = math.tan(radians) * s.depth
+        # diffx is divided by 2 because each side of the dove tail shares the diffx
+        diffx = diffx / 2.0
         # cos = adjacent / hypotenuse == depth / edge
         hypotenuse = s.depth / math.cos(radians)
 
@@ -1968,7 +1971,8 @@ class DuckbillJoint1(DuckbillBase):
         self.corner(p*-90, radius)
 
         self.edge(offset1 - s.size / 2, tabs=1)
-        log_delta('moving into half to first hole', offset1 - s.size / 2)
+        log_delta('moving into half to first hole', offset1 - s.size / 2, 2)
+
         if not self.positive:
             self.draw_hole(s, 1)
         self.edge(s.size/2)
@@ -1989,17 +1993,17 @@ class DuckbillJoint1(DuckbillBase):
             log_delta('moving out of dove tail', (diffx -radius_diff) + s.size/2)
             self.corner(p * angle, radius)
             self.edge(hypotenuse - 2 * radius_diff)
-            log_delta('moving down and back from duckbill angle\n', -1* diffx)
             self.corner(-1 * p * angle, radius)
+            log_delta('moving down and back from duckbill angle\n', -1* diffx, 3)
 
             # self.edge(s.size/2.0)
             # log_delta('finishing duckbill', s.size/2.0)
-            self.edge(s.size/2.0)
-            log_delta('move to hole', s.size / 2.0)
+            self.edge((diffx - radius_diff) + s.size/2.0)
+            log_delta('move to hole', (diffx - radius_diff) + s.size / 2.0, 4)
             if not self.positive:
                 self.draw_hole(s, 1)
-            self.edge(s.size/2.0)
-            log_delta('move out of hole', s.size / 2.0)
+            self.edge((diffx - radius_diff) + s.size/2.0)
+            log_delta('move out of hole', (diffx - radius_diff) + s.size / 2.0)
         self.draw_guideline_marker(2)
         self.edge(offset2)
         log_delta('moving to offset', offset2)
